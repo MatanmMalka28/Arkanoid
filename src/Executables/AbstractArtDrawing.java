@@ -1,7 +1,12 @@
+package Executables;
+
+import Geometry.GeometryGenerator;
+import Geometry.Line;
+import Geometry.Point;
 import biuoop.DrawSurface;
 import biuoop.GUI;
 
-import java.awt.*;
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,8 +57,8 @@ public class AbstractArtDrawing {
 
     private void drawLine(Line line, DrawSurface d) {
         d.setColor(Color.BLACK);
-        d.drawLine(((int) line.start.getX()), ((int) line.start.getY()),
-                ((int) line.end.getX()), ((int) line.end.getY()));
+        d.drawLine(((int) line.start().getX()), ((int) line.start().getY()),
+                ((int) line.end().getX()), ((int) line.end().getY()));
     }
 
     private void drawPoint(Point point, DrawSurface d, Color color) {

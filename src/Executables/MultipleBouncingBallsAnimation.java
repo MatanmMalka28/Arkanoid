@@ -1,8 +1,12 @@
+package Executables;
+
+import Game.Frame;
+import Geometry.Point;
 import biuoop.DrawSurface;
 import biuoop.GUI;
 import biuoop.Sleeper;
 
-import java.awt.*;
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +30,7 @@ public class MultipleBouncingBallsAnimation {
         }
         GUI gui = new GUI("Multiple Bouncing Balls Animation", 400,400);
         Sleeper sleeper = new Sleeper();
-        Frame myFrame = new Frame(new Point(0,0),new Point(400,400), Color.GRAY);
+        Frame myFrame = new Frame(new Point(0,0),new Geometry.Point(400,400), Color.GRAY);
         for (Integer size:sizeList){
             myFrame.addBall(size);
         }

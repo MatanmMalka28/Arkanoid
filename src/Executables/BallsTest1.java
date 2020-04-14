@@ -1,3 +1,7 @@
+package Executables;
+
+import Game.Objects.Ball;
+import Geometry.Point;
 import biuoop.DrawSurface;
 import biuoop.GUI;
 import biuoop.Sleeper;

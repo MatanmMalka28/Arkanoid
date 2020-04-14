@@ -1,3 +1,8 @@
+package Geometry;
+
+import Geometry.Line;
+import Geometry.Point;
+
 import java.util.Random;
 
 public class GeometryGenerator {
@@ -33,6 +38,10 @@ public class GeometryGenerator {
 
     public Line generateLine() {
         return new Line(this.generatePoint(), this.generatePoint());
+    }
+
+    public Rectangle generateRectangle(int width, int height){
+        return new Rectangle(this.generatePoint(),width,height);
     }
 
     private double generateNumber(Var var) {

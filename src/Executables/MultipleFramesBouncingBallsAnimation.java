@@ -1,8 +1,12 @@
+package Executables;
+
+import Game.Frame;
+import Geometry.Point;
 import biuoop.DrawSurface;
 import biuoop.GUI;
 import biuoop.Sleeper;
 
-import java.awt.*;
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 

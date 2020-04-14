@@ -1,6 +1,14 @@
+package Geometry;
+
+
+import Utilities.Utilities;
+
+import java.util.List;
+import java.util.Objects;
+
 public class Line {
-    Point start, end;
-    Double a, b;//y=ax+b
+    private Point start, end;
+    private Double a, b;//y=ax+b
     boolean isVertical;
 
 
@@ -13,6 +21,10 @@ public class Line {
 
     public Line(double x1, double y1, double x2, double y2) {
         this(new Point(x1, y1), new Point(x2, y2));
+    }
+
+    private Line(Line l) {
+        this(l.start, l.end);
     }
 
     public Double getSlope() {
@@ -49,7 +61,7 @@ public class Line {
 
     // Returns true if the lines intersect, false otherwise
     public boolean isIntersecting(Line other) {
-        return this.intersectionWith(other)!=null;
+        return this.intersectionWith(other) != null;
     }
 
     // Returns the intersection point if the lines intersect,
@@ -58,7 +70,7 @@ public class Line {
         Point intersection = null;
         double x, y;
         if (this.isVertical && other.isVertical) {
-            /*if (Utilities.compareDoubles(this.start.getX(), other.start.getX())) {
+            /*if (Utilities.Utilities.compareDoubles(this.start.getX(), other.start.getX())) {
                 if (this.pointOnLine(other.start) || this.pointOnLine(other.end)) {
                     return this.pointOnLine(other.start) ? other.start.copy() : other.end.copy();
                 }
@@ -80,10 +92,38 @@ public class Line {
         return this.pointOnLine(intersection) && other.pointOnLine(intersection) ? intersection : null;
     }
 
+    // If this line does not intersect with the rectangle, return null.
+    // Otherwise, return the closest intersection point to the
+    // start of the line.
+    public Point closestIntersectionToStartOfLine(Rectangle rect) {
+        List<Point> hitPoints = rect.intersectionPoints(this);
+        if (hitPoints.isEmpty()) {
+            return null;
+        } else {
+            Point closestPoint = hitPoints.get(0);
+            hitPoints.remove(0);
+            for (Point hit : hitPoints) {
+                if (hit.distance(this.start) < closestPoint.distance(this.start)) {
+                    closestPoint = hit;
+                }
+            }
+            return closestPoint;
+        }
+    }
+
     // equals -- return true is the lines are equal, false otherwise
     public boolean equals(Line other) {
         return (this.start.equals(other.start) && this.end.equals(other.end)) ||
                 (this.start.equals(other.end) && this.end.equals(other.start));
+    }
+
+    public boolean pointOnLine(Point p) {
+        double length = this.start.distance(p) + p.distance(this.end);
+        return Utilities.compareDoubles(length, this.length());
+    }
+
+    public Line copy() {
+        return new Line(this);
     }
 
     private void initializeLine() {
@@ -108,8 +148,16 @@ public class Line {
         }
     }
 
-    public boolean pointOnLine(Point p) {
-        double length = this.start.distance(p) + p.distance(this.end);
-        return Utilities.compareDoubles(length, this.length());
+    @Override
+    public int hashCode() {
+        return Objects.hash(start, end);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Line)) return false;
+        Line line = (Line) o;
+        return this.equals(line);
     }
 }

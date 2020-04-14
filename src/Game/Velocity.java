@@ -1,3 +1,7 @@
+package Game;
+
+import Geometry.Point;
+
 public class Velocity {
     private double dx,dy, angle;
     // constructor
