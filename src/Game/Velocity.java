@@ -35,6 +35,10 @@ public class Velocity {
         return new Point(p.getX()+this.dx,p.getY()+this.dy);
     }
 
+    public Point applyToPoint(Point p, int size){
+        return new Point(p.getX()+this.dx + size,p.getY()+this.dy+ size);
+    }
+
     public Velocity changeSign(double x, double y){
         return new Velocity(this.dx*Math.signum(x),this.dy*Math.signum(y));
     }
