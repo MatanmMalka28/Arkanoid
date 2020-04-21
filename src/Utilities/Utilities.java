@@ -39,6 +39,29 @@ public class Utilities {
         blockList.add(new Block(topLeft, ((int) bottomRight.getX()), -size));//up
         blockList.add(new Block(bottomLeft,((int) bottomRight.getX()),size));//down
         return blockList;
+    }
 
+    public static double calculateAngle(double y, double x) {
+        double angle = 0;
+        if (x == 0) {
+            if (y == 0)
+                angle = 0;
+            else if (y > 0)
+                angle = Math.PI / 2;
+            else
+                angle = -Math.PI / 2;
+        } else {
+            angle = Math.atan(y / x);
+            if (x < 0) {
+                if (y > 0) {
+                    angle += Math.PI;
+                } else if (y < 0) {
+                    angle -= Math.PI;
+                } else {
+                    angle = Math.PI;
+                }
+            }
+        }
+        return angle;
     }
 }

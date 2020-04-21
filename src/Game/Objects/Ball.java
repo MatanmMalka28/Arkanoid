@@ -101,13 +101,12 @@ public class Ball {
     }
 
     public Point nextStep() {
-        /*if (Math.hypot(this.getVelocity().getDx(), this.getVelocity().getDy()) <= this.size) {*/
-            Velocity velocity = new Velocity(Math.copySign(this.size, this.getVelocity().getDx()),
-                    Math.copySign(this.size, this.getVelocity().getDy()));
-            return velocity.applyToPoint(this.center);
-/*        } else {
+        if (this.velocity.getSpeed() < this.size) {
+            Velocity v = Velocity.fromAngleAndSpeed(this.velocity.getAngle(), this.velocity.getSpeed() + this.size);
+            return v.applyToPoint(this.center);
+        } else {
             return this.velocity.applyToPoint(this.center);
-        }*/
+        }
 
     }
 
@@ -119,8 +118,8 @@ public class Ball {
         d.drawCircle(this.getX(), this.getY(), this.size);
     }
 
-    private Line calcTrajectory(Point p) {
-        return new Line(p, this.nextStep());
+    private Line calcTrajectory() {
+        return new Line(this.center, this.nextStep());
     }
 
     private Point getCollisionPoint(Line trajectory) {
