@@ -89,7 +89,11 @@ public class GameGenerator {
     }
 
     public Ball getBall(int size, Velocity v) {
-        Ball ball = new Ball(this.generator.getPoint(), size, this.getColor());
+        Point center = this.generator.getPoint();
+        while (!this.ballCenterInFrame(center, size)) {
+            center = this.generator.getPoint();
+        }
+        Ball ball = new Ball(center, size, this.getColor());
         ball.setVelocity(v);
         ball.setGameBorders(this.topLeft, this.bottomRight);
         return ball;
@@ -115,5 +119,10 @@ public class GameGenerator {
         this.topLeft = topLeft;
         this.bottomRight = bottomRight;
         this.generator = new GeometryGenerator(this.topLeft, this.bottomRight);
+    }
+
+    private boolean ballCenterInFrame(Point center, int size) {
+        return center.getX() + size < this.bottomRight.getX() && center.getX() - size > topLeft.getX() &&
+                center.getY() + size < this.bottomRight.getY() && center.getY() - size > topLeft.getY();
     }
 }
