@@ -2,6 +2,7 @@ package Game;
 
 import Geometry.Point;
 import Utilities.Utilities;
+import Utilities.Axis;
 
 public class Velocity {
     private double dx, dy;
@@ -30,6 +31,7 @@ public class Velocity {
         return Math.hypot(this.dx, this.dy);
     }
 
+
     // Take a point with position (x,y) and return a new point
     // with position (x+dx, y+dy)
     public Point applyToPoint(Point p) {
@@ -54,5 +56,35 @@ public class Velocity {
         double dx = Math.sin(Math.toRadians(angle)) * speed;
         double dy = Math.cos(Math.toRadians(angle - 180)) * speed;
         return new Velocity(dx, dy);
+    }
+
+    public static boolean signsEqual(Velocity first, Velocity second, Axis axis) {
+        boolean signEqual;
+        switch (axis) {
+            case Y:
+                signEqual = Math.signum(first.dy) == Math.signum(second.dy);
+                break;
+            case X:
+                signEqual = Math.signum(first.dx) == Math.signum(second.dx);
+                break;
+            default:
+            case XY:
+                signEqual = Math.signum(first.dx) == Math.signum(second.dx) &&
+                        Math.signum(first.dy) == Math.signum(second.dy);
+                break;
+        }
+        return signEqual;
+    }
+
+    public static Axis signsDifferrance(Velocity first, Velocity second) {
+        if (signsEqual(first, second, Axis.XY)) {
+            return null;
+        } else if (signsEqual(first, second, Axis.X)) {
+            return Axis.Y;
+        } else if (signsEqual(first, second, Axis.Y)) {
+            return Axis.X;
+        } else {
+            return Axis.XY;
+        }
     }
 }

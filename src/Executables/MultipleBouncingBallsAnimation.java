@@ -31,12 +31,11 @@ public class MultipleBouncingBallsAnimation {
         GUI gui = new GUI("Multiple Bouncing Balls Animation", 400,400);
         Sleeper sleeper = new Sleeper();
         Frame myFrame = new Frame(new Point(0,0),new Geometry.Point(400,400), Color.GRAY);
-        for (Integer size:sizeList){
-            myFrame.addBall(size);
-        }
+        myFrame.addBalls(sizeList);
         while (true){
             DrawSurface d = gui.getDrawSurface();
-            myFrame.runFrame(d);
+            myFrame.moveBalls();
+            myFrame.drawOn(d);
             gui.show(d);
             sleeper.sleepFor(50);
         }

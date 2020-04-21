@@ -50,7 +50,7 @@ public class AbstractArtDrawing {
     private List<Line> generateLines(int numOfLines) {
         List<Line> lineList = new ArrayList<>();
         for (int i = 0; i < numOfLines; i++) {
-            lineList.add(this.generator.generateLine());
+            lineList.add(this.generator.getLine());
         }
         return lineList;
     }

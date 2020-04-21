@@ -41,8 +41,10 @@ public class MultipleFramesBouncingBallsAnimation {
         Sleeper sleeper = new Sleeper();
         while (true){
             DrawSurface d = gui.getDrawSurface();
-            grayFrame.runFrame(d);
-            yellowFrame.runFrame(d);
+            grayFrame.moveBalls();
+            grayFrame.drawOn(d);
+            yellowFrame.moveBalls();
+            yellowFrame.drawOn(d);
             gui.show(d);
             sleeper.sleepFor(50);
         }
