@@ -1,7 +1,7 @@
-package Executables;
+package executables;
 
-import Geometry.Line;
-import Geometry.Point;
+import geometry.Line;
+import geometry.Point;
 
 /**
  * This class does some simple tessting of the Geometry.Point and Geometry.Line classes.

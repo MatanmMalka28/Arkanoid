@@ -1,23 +1,55 @@
-package Game;
+package game;
 
-import Game.Objects.Ball;
-import Game.Objects.Block;
-import Game.Objects.Collections.GameEnvironment;
-import Game.Objects.Collidable;
-import Geometry.Point;
-import Utilities.Utilities;
+import game.objects.Ball;
+import geometry.Point;
 import biuoop.DrawSurface;
 
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The type Frame.
+ */
 public class Frame {
-    private Point topLeft, bottomRight;
+    /**
+     * The Top left.
+     */
+    private Point topLeft, /**
+     * The Bottom right.
+     */
+    bottomRight;
+    /**
+     * The Ball list.
+     */
     private List<Ball> ballList;
+    /**
+     * The Background color.
+     */
     private Color backgroundColor;
+    /**
+     * The Generator.
+     */
     private GameGenerator generator;
 
+    /**
+     * Instantiates a new Frame.
+     *
+     * @param width           the width
+     * @param height          the height
+     * @param backgroundColor the background color
+     */
+    public Frame(double width, double height, Color backgroundColor) {
+        this(new Point(0, 0), new Point(width, height), backgroundColor);
+    }
+
+    /**
+     * Instantiates a new Frame.
+     *
+     * @param topLeft         the top left
+     * @param bottomRight     the bottom right
+     * @param backgroundColor the background color
+     */
     public Frame(Point topLeft, Point bottomRight, Color backgroundColor) {
         this.topLeft = topLeft;
         this.bottomRight = bottomRight;
@@ -26,49 +58,89 @@ public class Frame {
         this.ballList = new ArrayList<>();
     }
 
-    public Frame(double width, double height, Color backgroundColor) {
-        this(new Point(0, 0), new Point(width, height), backgroundColor);
-    }
-
+    /**
+     * Add ball.
+     */
     public void addBall() {
         this.addBall(this.generator.getBall());
     }
 
-    public void addBall(int size) {
-        this.addBall(this.generator.getBall(size));
+    /**
+     * Add ball.
+     *
+     * @param ball the ball
+     */
+    public void addBall(Ball ball) {
+        this.ballList.add(ball);
     }
 
+    /**
+     * Sets speed.
+     *
+     * @param lower the lower
+     * @param upper the upper
+     */
     public void setSpeed(double lower, double upper) {
         this.generator.setSpeedLower(lower);
         this.generator.setSpeedUpper(upper);
     }
 
+    /**
+     * Sets deg.
+     *
+     * @param lower the lower
+     * @param upper the upper
+     */
     public void setDeg(double lower, double upper) {
         this.generator.setDegLower(lower);
         this.generator.setDegUpper(upper);
     }
 
+    /**
+     * Sets radius.
+     *
+     * @param lower the lower
+     * @param upper the upper
+     */
     public void setRadius(int lower, int upper) {
         this.generator.setRadiusLower(lower);
         this.generator.setRadiusUpper(upper);
     }
 
-    public void addBall(Ball ball) {
-        this.ballList.add(ball);
-    }
-
+    /**
+     * Add balls.
+     *
+     * @param ballsSize the balls size
+     */
     public void addBalls(List<Integer> ballsSize) {
         for (Integer size : ballsSize) {
             this.addBall(size);
         }
     }
 
+    /**
+     * Add ball.
+     *
+     * @param size the size
+     */
+    public void addBall(int size) {
+        this.addBall(this.generator.getBall(size));
+    }
+
+    /**
+     * Move balls.
+     */
     public void moveBalls() {
         for (Ball ball : this.ballList) {
             ball.moveOneStep();
         }
     }
 
+    /**
+     * Draw on.
+     *
+     * @param d the d
+     */
     public void drawOn(DrawSurface d) {
         this.drawBackground(d);
         for (Ball ball : this.ballList) {
@@ -77,6 +149,11 @@ public class Frame {
 
     }
 
+    /**
+     * Draw background.
+     *
+     * @param d the d
+     */
     private void drawBackground(DrawSurface d) {
         d.setColor(this.backgroundColor);
         int width = Math.abs((int) (this.topLeft.getX() - this.bottomRight.getX()));
