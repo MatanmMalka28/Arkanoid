@@ -43,7 +43,7 @@ public class Rectangle {
 // Create a new rectangle with location and width/height.
     public Rectangle(Point topLeft, double width, double height) {
         this.topLeft = topLeft;
-        this.bottomRight = new Point(topLeft.getX() + width, topLeft.getY() + height);
+        this.bottomRight = new Point(topLeft.getX() + Math.abs(width), topLeft.getY() + Math.abs(height));
         this.edgesMap = Utilities.translatePointsToBorders(topLeft, this.bottomRight);
         this.width = width;
         this.height = height;
@@ -153,17 +153,17 @@ public class Rectangle {
      * @return the direction
      */
     public Direction pointOnEdge(Point p) {
-        //todo: check if point is on two lines
-        Direction edgeHit = Direction.NONE;
-        for (Direction edge : this.edgesMap.keySet()) {
-            if (this.edgesMap.get(edge).pointOnLine(p)) {
-                if (edgeHit != Direction.NONE) {
-                    return Direction.BOTH;
+        Direction direction = Direction.NONE;
+        for (Direction key : this.edgesMap.keySet()) {
+            if (this.edgesMap.get(key).pointOnLine(p)) {
+                if (direction != Direction.NONE) {
+                    direction = Direction.BOTH;
+                    break;
                 }
-                edgeHit = edge;
+                direction = key;
             }
         }
-        return edgeHit;
+        return direction;
     }
 
     /**

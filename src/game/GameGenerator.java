@@ -26,7 +26,7 @@ public class GameGenerator {
     /**
      * The constant DEFAULT_SPEED_UPPER_BOUND.
      */
-    private static final double DEFAULT_SPEED_UPPER_BOUND = 35;
+    private static final double DEFAULT_SPEED_UPPER_BOUND = 15;
     /**
      * The constant DEFAULT_DEGREES_LOWER.
      */
@@ -163,7 +163,7 @@ public class GameGenerator {
         }
         Ball ball = new Ball(center, size, this.getColor());
         ball.setVelocity(v);
-        ball.setGameBorders(this.topLeft, this.bottomRight);
+        ball.setGameBorders(this.topLeft, this.bottomRight, 20);
         return ball;
     }
 

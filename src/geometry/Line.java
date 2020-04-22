@@ -1,8 +1,11 @@
 package geometry;
 
 
+import biuoop.DrawSurface;
+import utilities.Axis;
 import utilities.Utilities;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
@@ -57,34 +60,13 @@ public class Line {
     }
 
     /**
-     * Initialize line.
+     * Instantiates a new Line.
+     *
+     * @param l the l
      */
-    private void initializeLine() {
-        this.calcSlope();
-        this.calcB();
-    }
-
-    /**
-     * Calc slope.
-     */
-    private void calcSlope() {
-        if (!Utilities.compareDoubles(this.start.getX(), this.end.getX())) {
-            this.a = (this.start.getY() - this.end.getY()) / (this.start.getX() - this.end.getX());
-        } else {
-            this.a = null;
-            this.isVertical = true;
-        }
-    }
-
-    /**
-     * Calc b.
-     */
-    private void calcB() {
-        if (!this.isVertical) {
-            this.b = this.start.getY() - (this.start.getX() * this.getSlope());
-        } else {
-            this.b = null;
-        }
+    @SuppressWarnings("CopyConstructorMissesField")
+    private Line(Line l) {
+        this(l.start, l.end);
     }
 
     /**
@@ -97,22 +79,21 @@ public class Line {
     }
 
     /**
-     * Instantiates a new Line.
-     *
-     * @param l the l
-     */
-    @SuppressWarnings("CopyConstructorMissesField")
-    private Line(Line l) {
-        this(l.start, l.end);
-    }
-
-    /**
      * Is vertical boolean.
      *
      * @return the boolean
      */
     public boolean isVertical() {
         return this.isVertical;
+    }
+
+    /**
+     * Gets b.
+     *
+     * @return the b
+     */
+    public Double getB() {
+        return this.b;
     }
 
     /**
@@ -191,15 +172,6 @@ public class Line {
     }
 
     /**
-     * Gets b.
-     *
-     * @return the b
-     */
-    public Double getB() {
-        return this.b;
-    }
-
-    /**
      * Point on line boolean.
      *
      * @param p the p
@@ -254,6 +226,71 @@ public class Line {
         return new Line(this);
     }
 
+    /**
+     * Equals boolean.
+     *
+     * @param other the other
+     * @return the boolean
+     */
+// equals -- return true is the lines are equal, false otherwise
+    public boolean equals(Line other) {
+        return (this.start.equals(other.start) && this.end.equals(other.end))
+                || (this.start.equals(other.end) && this.end.equals(other.start));
+    }
+
+    public Line shiftLine(double amount, Axis axis) {
+        Line line;
+        switch (axis) {
+            case Y:
+                line = new Line(this.start.getX(), this.start.getY() + amount, this.end.getX(), this.end.getY() + amount);
+                break;
+            case X:
+                line = new Line(this.start.getX() + amount, this.start.getY(), this.end.getX() + amount, this.end.getY());
+                break;
+            default:
+            case XY:
+                line = new Line(this.start.getX() + amount, this.start.getY() + amount, this.end.getX() + amount, this.end.getY() + amount);
+                break;
+        }
+        return line;
+    }
+
+    public void drawOn(DrawSurface d) {
+        d.drawLine(((int) this.start.getX()), ((int) this.start.getY()),
+                ((int) this.end.getX()), ((int) this.end.getY()));
+    }
+
+    /**
+     * Initialize line.
+     */
+    private void initializeLine() {
+        this.calcSlope();
+        this.calcB();
+    }
+
+    /**
+     * Calc slope.
+     */
+    private void calcSlope() {
+        if (!Utilities.compareDoubles(this.start.getX(), this.end.getX())) {
+            this.a = (this.start.getY() - this.end.getY()) / (this.start.getX() - this.end.getX());
+        } else {
+            this.a = null;
+            this.isVertical = true;
+        }
+    }
+
+    /**
+     * Calc b.
+     */
+    private void calcB() {
+        if (!this.isVertical) {
+            this.b = this.start.getY() - (this.start.getX() * this.getSlope());
+        } else {
+            this.b = null;
+        }
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(start, end);
@@ -271,15 +308,4 @@ public class Line {
         return this.equals(line);
     }
 
-    /**
-     * Equals boolean.
-     *
-     * @param other the other
-     * @return the boolean
-     */
-// equals -- return true is the lines are equal, false otherwise
-    public boolean equals(Line other) {
-        return (this.start.equals(other.start) && this.end.equals(other.end))
-                || (this.start.equals(other.end) && this.end.equals(other.start));
-    }
 }

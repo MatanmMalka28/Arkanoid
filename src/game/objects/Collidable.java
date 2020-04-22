@@ -5,6 +5,7 @@ import game.Velocity;
 import geometry.Line;
 import geometry.Point;
 import geometry.Rectangle;
+import utilities.Direction;
 
 /**
  * The interface Collidable.
@@ -17,19 +18,6 @@ public interface Collidable {
      */
 // Return the "collision shape" of the object.
     Rectangle getCollisionRectangle();
-
-    /**
-     * Hit velocity.
-     *
-     * @param collisionPoint  the collision point
-     * @param currentVelocity the current velocity
-     * @return the velocity
-     */
-// Notify the object that we collided with it at collisionPoint with
-    // a given velocity.
-    // The return is the new velocity expected after the hit (based on
-    // the force the object inflicted on us).
-    Velocity hit(Point collisionPoint, Velocity currentVelocity);
 
     /**
      * Hit velocity.
@@ -47,4 +35,6 @@ public interface Collidable {
      * @return the collision info
      */
     CollisionInfo getCollisionInfo(Line trajectory);
+
+    Direction getHitDirection(Point hit);
 }

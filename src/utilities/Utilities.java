@@ -6,6 +6,7 @@ import game.objects.Collidable;
 import geometry.Line;
 import geometry.Point;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -56,15 +57,15 @@ public class Utilities {
      * @param bottomRight the bottom right
      * @return the list
      */
-    public static List<Collidable> translatePointsToBlocks(Point topLeft, Point bottomRight) {
-        int size = 20;
+    public static List<Collidable> translatePointsToBlocks(Point topLeft, Point bottomRight, int size) {
+        Color color = Color.red;
         Point topRight = new Point(bottomRight.getX(), topLeft.getY());
         Point bottomLeft = new Point(topLeft.getX(), bottomRight.getY());
         List<Collidable> blockList = new ArrayList<>();
-        blockList.add(new Block(topLeft, -size, ((int) bottomRight.getY()))); //left
-        blockList.add(new Block(topRight, size, ((int) bottomRight.getY()))); //right
-        blockList.add(new Block(topLeft, ((int) bottomRight.getX()), -size)); //up
-        blockList.add(new Block(bottomLeft, ((int) bottomRight.getX()), size)); //down
+        blockList.add(new Block(new Point(topLeft.getX() - size, topLeft.getY()), bottomLeft, color)); //left
+        blockList.add(new Block(topRight, new Point(bottomRight.getX() + size, bottomRight.getY()), color)); //right
+        blockList.add(new Block(new Point(topLeft.getX(), topLeft.getY() - size), topRight, color)); //up
+        blockList.add(new Block(bottomLeft, new Point(bottomRight.getX(), bottomRight.getY() + size), color)); //down
         return blockList;
     }
 

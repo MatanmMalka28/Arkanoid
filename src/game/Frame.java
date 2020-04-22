@@ -1,8 +1,12 @@
 package game;
 
 import game.objects.Ball;
+import game.objects.Block;
+import game.objects.Collidable;
+import game.objects.collections.GameEnvironment;
 import geometry.Point;
 import biuoop.DrawSurface;
+import org.omg.CORBA.BAD_CONTEXT;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -127,26 +131,19 @@ public class Frame {
         this.addBall(this.generator.getBall(size));
     }
 
+    public void setGameEnviorment(GameEnvironment gameEnvironment) {
+        for (Ball ball : this.ballList) {
+            ball.setGameEnvironment(gameEnvironment);
+        }
+    }
+
     /**
      * Move balls.
      */
     public void moveBalls() {
         for (Ball ball : this.ballList) {
-            ball.moveOneStep();
+            ball.moveOneStep(true);
         }
-    }
-
-    /**
-     * Draw on.
-     *
-     * @param d the d
-     */
-    public void drawOn(DrawSurface d) {
-        this.drawBackground(d);
-        for (Ball ball : this.ballList) {
-            ball.drawOn(d);
-        }
-
     }
 
     /**
@@ -159,6 +156,39 @@ public class Frame {
         int width = Math.abs((int) (this.topLeft.getX() - this.bottomRight.getX()));
         int height = Math.abs((int) (this.topLeft.getY() - this.bottomRight.getY()));
         d.fillRectangle(((int) this.topLeft.getX()), ((int) this.topLeft.getY()), width, height);
+    }
+
+    /**
+     * Draw on.
+     *
+     * @param d the d
+     */
+    public void drawOn(DrawSurface d) {
+        this.drawBackground(d);
+        GameEnvironment gameEnvironment = this.ballList.get(0).getGameEnvironment();
+        for (Collidable collidable : gameEnvironment.getCollidables()) {
+            if (collidable instanceof Block) {
+                ((Block) collidable).drawOn(d);
+            }
+        }
+        for (Ball ball : this.ballList) {
+            ball.drawOn(d);
+        }
+
+
+    }
+
+    public void addBlocks(List<Collidable> collidables) {
+
+        for (Ball ball : this.ballList) {
+            ball.getGameEnvironment().addCollidable(collidables);
+        }
+    }
+
+    public void addBlock(Collidable collidable) {
+        for (Ball ball : this.ballList) {
+            ball.getGameEnvironment().addCollidable(collidable);
+        }
     }
 
 

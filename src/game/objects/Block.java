@@ -10,6 +10,7 @@ import biuoop.DrawSurface;
 
 import java.awt.Color;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -138,11 +139,6 @@ public class Block implements Collidable {
     }
 
     @Override
-    public Velocity hit(Point collisionPoint, Velocity currentVelocity) {
-        return this.changeVelocity(this.rectangle.pointOnEdge(collisionPoint), currentVelocity);
-    }
-
-    @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -167,41 +163,26 @@ public class Block implements Collidable {
 
     @Override
     public Velocity hit(CollisionInfo collisionInfo, Velocity currentVelocity) {
-        if (this.equals(collisionInfo.getCollisionObject())) {
-            return this.changeVelocity(collisionInfo.getHitDirection(), currentVelocity);
-        } else {
-            return this.hit(collisionInfo.getCollisionPoint(), currentVelocity);
-        }
-    }
-
-
-    /**
-     * Change velocity velocity.
-     *
-     * @param edge            the edge
-     * @param currentVelocity the current velocity
-     * @return the velocity
-     */
-    private Velocity changeVelocity(Direction edge, Velocity currentVelocity) {
-        Velocity newVelocity;
-        switch (edge) {
+        Direction direction = this.getHitDirection(collisionInfo.getCollisionPoint());
+        Velocity v;
+        switch (direction) {
             case TOP:
             case BOTTOM:
-                newVelocity = currentVelocity.changeSign(1, -1);
+                v = currentVelocity.changeSign(1, -1);
                 break;
             case LEFT:
             case RIGHT:
-                newVelocity = currentVelocity.changeSign(1, -1);
+                v = currentVelocity.changeSign(-1, 1);
                 break;
             case BOTH:
-                newVelocity = currentVelocity.changeSign(-1, -1);
+                v = currentVelocity.changeSign(-1, -1);
                 break;
             case NONE:
             default:
-                newVelocity = currentVelocity.copy();
+                v = currentVelocity.copy();
                 break;
         }
-        return newVelocity;
+        return v;
     }
 
 
@@ -220,6 +201,22 @@ public class Block implements Collidable {
             }
             return new CollisionInfo(closestPoint, this);
         }
+    }
+
+    @Override
+    public Direction getHitDirection(Point hit) {
+        Direction direction = Direction.NONE;
+        Map<Direction, Line> edgesMap = this.rectangle.getEdgesMap();
+        for (Direction key : edgesMap.keySet()) {
+            if (edgesMap.get(key).pointOnLine(hit)) {
+                if (direction != Direction.NONE) {
+                    direction = Direction.BOTH;
+                    break;
+                }
+                direction = key;
+            }
+        }
+        return direction;
     }
 
 

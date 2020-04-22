@@ -2,8 +2,10 @@ package game.objects;
 
 import game.objects.collections.GameEnvironment;
 import game.Velocity;
+import game.objects.dataStructers.CollisionInfo;
 import geometry.Line;
 import geometry.Point;
+import utilities.Axis;
 import utilities.Utilities;
 import utilities.Direction;
 import biuoop.DrawSurface;
@@ -49,6 +51,7 @@ public class Ball {
      * The Game environment.
      */
     private GameEnvironment gameEnvironment;
+    private boolean trajectoryHitLastTurn;
 
     // constructor
 
@@ -133,7 +136,8 @@ public class Ball {
      * @return the game environment
      */
     public GameEnvironment getGameEnvironment() {
-        return this.gameEnvironment.copy();
+        //todo: make copy
+        return this.gameEnvironment;
     }
 
     /**
@@ -143,6 +147,25 @@ public class Ball {
      */
     public void setGameEnvironment(GameEnvironment environment) {
         this.gameEnvironment = environment.copy();
+    }
+
+    /**
+     * Gets x.
+     *
+     * @return the x
+     */
+// accessors
+    public int getX() {
+        return ((int) this.center.getX());
+    }
+
+    /**
+     * Gets y.
+     *
+     * @return the y
+     */
+    public int getY() {
+        return ((int) this.center.getY());
     }
 
     /**
@@ -185,6 +208,10 @@ public class Ball {
         this.gameBorders = Utilities.translatePointsToBorders(topLeft, bottomRight);
     }
 
+    public void setGameBorders(Point topLeft, Point bottomRight, int size) {
+        this.gameEnvironment.addCollidable(Utilities.translatePointsToBlocks(topLeft, bottomRight, size));
+    }
+
     /**
      * Move one step.
      */
@@ -196,9 +223,48 @@ public class Ball {
             v = v.changeSign(-1, -1);
             this.center = v.applyToPoint(hit);
             this.velocity = this.changeVelocityUponHit(hit);
-        } else {
+            this.trajectoryHitLastTurn = true;
+        } else if (!this.trajectoryHitLastTurn) {
             this.center = this.velocity.applyToPoint(this.center);
             this.velocity = this.checkPerimetrHits();
+        } else {
+            this.center = this.velocity.applyToPoint(this.center);
+            this.trajectoryHitLastTurn = false;
+        }
+    }
+
+    public void moveOneStep(boolean bool) {
+        Line trajectory = this.calcTrajectory();
+        CollisionInfo info = this.gameEnvironment.getClosestCollision(trajectory);
+        if (info != null) {
+            Velocity v = Velocity.fromAngleAndSpeed(this.velocity.getAngle(), this.radius);
+            v = v.changeSign(-1, -1);
+            this.center = v.applyToPoint(info.getCollisionPoint());
+            this.velocity = info.getCollisionObject().hit(info, this.velocity);
+            this.trajectoryHitLastTurn = true;
+        } else if (!this.trajectoryHitLastTurn) {
+            this.center = this.velocity.applyToPoint(this.center);
+            this.velocity = this.checkPerimetrHits(true);
+        } else {
+            this.center = this.velocity.applyToPoint(this.center);
+            this.trajectoryHitLastTurn = false;
+        }
+    }
+
+    /**
+     * Draw on.
+     *
+     * @param d the d
+     */
+// draw the ball on the given DrawSurface
+    public void drawOn(DrawSurface d) {
+        d.setColor(this.color);
+        d.fillCircle(this.getX(), this.getY(), this.radius);
+        d.setColor(Color.BLACK);
+        d.drawCircle(this.getX(), this.getY(), this.radius);
+        //for debug:
+        if (debugMode) {
+            this.debugDraw(d);
         }
     }
 
@@ -237,6 +303,57 @@ public class Ball {
         return tempVelocity;
     }
 
+    private Velocity checkPerimetrHits(boolean bool) {
+        //todo: add point more on line function.
+        double diff = this.radius * DIFF_PERCENTAGE;
+        boolean x = false, y = false;
+        Velocity tempVelocity = this.velocity.copy();
+        Point hitX = null, hitY = null;
+        Line diameterX = new Line(new Point(this.center.getX() - diff, this.center.getY()),
+                new Point(this.center.getX() + diff, this.center.getY()));
+        Line upperDiameterX = diameterX.shiftLine(-diff, Axis.Y);
+        Line lowerDiameterX = diameterX.shiftLine(diff, Axis.Y);
+        CollisionInfo hit = this.gameEnvironment.getClosestCollision(upperDiameterX);
+        if (hit != null) {
+            tempVelocity = hit.getCollisionObject().hit(hit, this.velocity);
+            Velocity v = Velocity.fromAngleAndSpeed(90, Math.copySign(diff, tempVelocity.getDx()));
+            hitX = v.applyToPoint(hit.getCollisionPoint());
+            x = true;
+        }
+        hit = this.gameEnvironment.getClosestCollision(lowerDiameterX);
+        if (hit != null && !x) {
+            tempVelocity = hit.getCollisionObject().hit(hit, this.velocity);
+            Velocity v = Velocity.fromAngleAndSpeed(90, Math.copySign(diff, tempVelocity.getDx()));
+            hitX = v.applyToPoint(hit.getCollisionPoint());
+        }
+        Line diameterY = new Line(new Point(this.center.getX(), this.center.getY() - diff),
+                new Point(this.center.getX(), this.center.getY() + diff));
+        Line rightDiameterY = diameterY.shiftLine(diff, Axis.X);
+        Line leftDiameterY = diameterY.shiftLine(-diff, Axis.X);
+        hit = this.gameEnvironment.getClosestCollision(rightDiameterY);
+        if (hit != null) {
+            tempVelocity = hit.getCollisionObject().hit(hit, this.velocity);
+            Velocity v = Velocity.fromAngleAndSpeed(0, Math.copySign(diff, -tempVelocity.getDy()));
+            hitY = v.applyToPoint(hit.getCollisionPoint());
+            y = true;
+
+        }
+        hit = this.gameEnvironment.getClosestCollision(leftDiameterY);
+        if (hit != null && !y) {
+            tempVelocity = hit.getCollisionObject().hit(hit, this.velocity);
+            Velocity v = Velocity.fromAngleAndSpeed(0, Math.copySign(diff, -tempVelocity.getDy()));
+            hitY = v.applyToPoint(hit.getCollisionPoint());
+        }
+        /*if (hitX != null && hitY != null) {
+            this.center = new Point(hitX.getX(), hitY.getY());
+        } else if (hitX != null) {
+            this.center = hitX;
+        } else if (hitY != null) {
+            this.center = hitY;
+        }*/
+        return tempVelocity;
+    }
+
     /**
      * Calc trajectory line.
      *
@@ -260,6 +377,14 @@ public class Ball {
         }
 
     }
+
+    /*private Point applyHit(Point hit) {
+        double scalar = Math.sqrt(0.5);
+        Velocity velocity;
+        double angle = this.velocity.getAngle();
+
+        return velocity.applyToPoint(hit);
+    }*/
 
     /**
      * Gets collision point.
@@ -328,50 +453,22 @@ public class Ball {
         return v;
     }
 
-    /**
-     * Draw on.
-     *
-     * @param d the d
-     */
-// draw the ball on the given DrawSurface
-    public void drawOn(DrawSurface d) {
-        d.setColor(this.color);
-        d.fillCircle(this.getX(), this.getY(), this.radius);
-        d.setColor(Color.BLACK);
-        d.drawCircle(this.getX(), this.getY(), this.radius);
-        //for debug:
-        if (debugMode) {
-            d.setColor(Color.red);
-            Line trajectory = this.calcTrajectory();
-            d.drawLine(((int) trajectory.start().getX()), ((int) trajectory.start().getY()),
-                    ((int) trajectory.end().getX()), ((int) trajectory.end().getY()));
-        }
-    }
-
-    /*private Point applyHit(Point hit) {
-        double scalar = Math.sqrt(0.5);
-        Velocity velocity;
-        double angle = this.velocity.getAngle();
-
-        return velocity.applyToPoint(hit);
-    }*/
-
-    /**
-     * Gets x.
-     *
-     * @return the x
-     */
-// accessors
-    public int getX() {
-        return ((int) this.center.getX());
-    }
-
-    /**
-     * Gets y.
-     *
-     * @return the y
-     */
-    public int getY() {
-        return ((int) this.center.getY());
+    private void debugDraw(DrawSurface d) {
+        d.setColor(Color.red);
+        this.calcTrajectory().drawOn(d);
+        double diff = this.radius * DIFF_PERCENTAGE;
+        Line diameterX = new Line(new Point(this.center.getX() - diff, this.center.getY()),
+                new Point(this.center.getX() + diff, this.center.getY()));
+        Line upperDiameterX = diameterX.shiftLine(-diff, Axis.Y);
+        Line lowerDiameterX = diameterX.shiftLine(diff, Axis.Y);
+        Line diameterY = new Line(new Point(this.center.getX(), this.center.getY() - diff),
+                new Point(this.center.getX(), this.center.getY() + diff));
+        Line rightDiameterY = diameterY.shiftLine(diff, Axis.X);
+        Line leftDiameterY = diameterY.shiftLine(-diff, Axis.X);
+        d.setColor(Color.green);
+        upperDiameterX.drawOn(d);
+        lowerDiameterX.drawOn(d);
+        rightDiameterY.drawOn(d);
+        leftDiameterY.drawOn(d);
     }
 }
