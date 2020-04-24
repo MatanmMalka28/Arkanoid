@@ -22,13 +22,14 @@ public interface Collidable {
     /**
      * Hit velocity.
      *
+     * @param hitter
      * @param collisionInfo   the collision info
      * @param currentVelocity the current velocity
      * @return the velocity
      */
-    Velocity hit(CollisionInfo collisionInfo, Velocity currentVelocity);
+    Velocity hit(Ball hitter, CollisionInfo collisionInfo, Velocity currentVelocity);
 
-    Velocity hit(Point collisionPoint, Velocity currentVelocity);
+    Velocity hit(Ball hitter, Point collisionPoint, Velocity currentVelocity);
 
     /**
      * Gets collision info.

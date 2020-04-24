@@ -29,9 +29,14 @@ public class SpriteCollection {
         this.spriteList.addAll(sprites);
     }
 
+    public void removeSprite(Sprite s) {
+        this.spriteList.remove(s);
+    }
+
     // call timePassed() on all sprites.
     public void notifyAllTimePassed() {
-        for (Sprite sprite : this.spriteList) {
+        List<Sprite> tempSpriteList = new ArrayList<>(this.spriteList);
+        for (Sprite sprite : tempSpriteList) {
             sprite.timePassed();
         }
     }

@@ -48,11 +48,11 @@ public class Paddle implements Sprite, Collidable {
     }
 
     @Override
-    public Velocity hit(CollisionInfo collisionInfo, Velocity currentVelocity) {
-        return this.hit(collisionInfo.getCollisionPoint(), currentVelocity);
+    public Velocity hit(Ball hitter, CollisionInfo collisionInfo, Velocity currentVelocity) {
+        return this.hit(hitter, collisionInfo.getCollisionPoint(), currentVelocity);
     }
 
-    public Velocity hit(Point collisionPoint, Velocity currentVelocity) {
+    public Velocity hit(Ball hitter, Point collisionPoint, Velocity currentVelocity) {
         Direction direction = this.getHitDirection(collisionPoint);
         Velocity velocity;
         switch (direction) {
@@ -64,7 +64,7 @@ public class Paddle implements Sprite, Collidable {
             case LEFT:
             case BOTTOM:
             case RIGHT:
-                velocity = this.paddle.hit(collisionPoint, currentVelocity);
+                velocity = this.paddle.hit(hitter, collisionPoint, currentVelocity);
                 break;
         }
         return velocity;

@@ -6,7 +6,6 @@ import game.objects.dataStructers.CollisionInfo;
 import geometry.Line;
 import geometry.Point;
 import geometry.Rectangle;
-import sun.plugin2.gluegen.runtime.CPU;
 import utilities.Axis;
 import utilities.Utilities;
 import utilities.Direction;
@@ -345,7 +344,7 @@ public class Ball implements Sprite {
             Velocity v = Velocity.fromAngleAndSpeed(this.velocity.getAngle(), this.radius);
             v = v.changeSign(-1, -1);
             this.center = v.applyToPoint(info.getCollisionPoint());
-            this.velocity = info.getCollisionObject().hit(info, this.velocity.copy());
+            this.velocity = info.getCollisionObject().hit(this, info, this.velocity.copy());
             this.trajectoryHitLastTurn = true;
         } else if (trajectoryHitLastTurn) {
             this.center = this.velocity.applyToPoint(this.center);
@@ -375,7 +374,7 @@ public class Ball implements Sprite {
             }
         }
         for (CollisionInfo info : infoSet) {
-            info.getCollisionObject().hit(info.getCollisionPoint(), this.velocity);
+            info.getCollisionObject().hit(this, info.getCollisionPoint(), this.velocity);
         }
         Velocity v;
         switch (direction) {

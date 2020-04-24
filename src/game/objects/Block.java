@@ -1,7 +1,10 @@
 package game.objects;
 
+import game.listeners.HitListener;
+import game.listeners.HitNotifier;
 import game.objects.dataStructers.CollisionInfo;
 import game.objects.attributes.Velocity;
+import game.runners.Game;
 import geometry.Line;
 import geometry.Point;
 import geometry.Rectangle;
@@ -11,6 +14,7 @@ import utilities.Direction;
 import biuoop.DrawSurface;
 
 import java.awt.Color;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -18,7 +22,7 @@ import java.util.Objects;
 /**
  * The type Block.
  */
-public class Block implements Collidable, Sprite {
+public class Block implements Collidable, Sprite, HitNotifier {
     private static final int DEFAULT_HIT_COUNT = 5;
     /**
      * The constant DEFAULT_COLOR.
@@ -35,6 +39,7 @@ public class Block implements Collidable, Sprite {
     private Color color;
 
     private int hitCount = HIT_COUNT;
+    private List<HitListener> hitListeners = new ArrayList<>();
 
     /**
      * Instantiates a new Block.
@@ -175,34 +180,18 @@ public class Block implements Collidable, Sprite {
         return rectangle.width();
     }
 
-    @Override
-    public Velocity hit(CollisionInfo collisionInfo, Velocity currentVelocity) {
-        return this.hit(collisionInfo.getCollisionPoint(), currentVelocity);
+    public int getHitPoints() {
+        return this.hitCount;
+    }
+
+    public void removeFromGame(Game game) {
+        game.removeCollidable(this);
+        game.removeSprite(this);
     }
 
     @Override
-    public Velocity hit(Point collisionPoint, Velocity currentVelocity) {
-        Direction direction = this.getHitDirection(collisionPoint);
-        Velocity v;
-        switch (direction) {
-            case TOP:
-            case BOTTOM:
-                v = currentVelocity.changeSign(1, -1);
-                break;
-            case LEFT:
-            case RIGHT:
-                v = currentVelocity.changeSign(-1, 1);
-                break;
-            case BOTH:
-                v = currentVelocity.changeSign(-1, -1);
-                break;
-            case NONE:
-            default:
-                v = currentVelocity.copy();
-                break;
-        }
-        this.decreaseHit();
-        return v;
+    public Velocity hit(Ball hitter, CollisionInfo collisionInfo, Velocity currentVelocity) {
+        return this.hit(hitter, collisionInfo.getCollisionPoint(), currentVelocity);
     }
 
     @Override
@@ -307,5 +296,50 @@ public class Block implements Collidable, Sprite {
      */
     public boolean equals(Block other) {
         return this.rectangle.equals(other.rectangle) && this.color.equals(other.color);
+    }
+
+    @Override
+    public Velocity hit(Ball hitter, Point collisionPoint, Velocity currentVelocity) {
+        Direction direction = this.getHitDirection(collisionPoint);
+        Velocity v;
+        switch (direction) {
+            case TOP:
+            case BOTTOM:
+                v = currentVelocity.changeSign(1, -1);
+                break;
+            case LEFT:
+            case RIGHT:
+                v = currentVelocity.changeSign(-1, 1);
+                break;
+            case BOTH:
+                v = currentVelocity.changeSign(-1, -1);
+                break;
+            case NONE:
+            default:
+                v = currentVelocity.copy();
+                break;
+        }
+        this.decreaseHit();
+        this.notifyHit(hitter);
+        return v;
+    }
+
+    private void notifyHit(Ball hitter) {
+        // Make a copy of the hitListeners before iterating over them.
+        List<HitListener> listeners = new ArrayList<HitListener>(this.hitListeners);
+        // Notify all listeners about a hit event:
+        for (HitListener hl : listeners) {
+            hl.hitEvent(this, hitter);
+        }
+    }
+
+    @Override
+    public void addHitListener(HitListener hl) {
+        this.hitListeners.add(hl);
+    }
+
+    @Override
+    public void removeHitListener(HitListener hl) {
+        this.hitListeners.remove(hl);
     }
 }

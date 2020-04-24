@@ -4,6 +4,9 @@ import biuoop.DrawSurface;
 import biuoop.GUI;
 import biuoop.Sleeper;
 import game.GameGenerator;
+import game.listeners.BlockRemover;
+import game.listeners.HitListener;
+import game.listeners.PrintingHitListener;
 import game.objects.Background;
 import game.objects.Ball;
 import game.objects.Block;
@@ -37,6 +40,7 @@ public class Game {
     private Point topLeft, bottomRight;
     private Background background;
     private GUI gui;
+    private boolean hasBlocks = true;
 
 
     public Game() {
@@ -95,26 +99,8 @@ public class Game {
 
     }
 
-    // Run the game -- start the animation loop.
-    public void run() {
-        int framesPerSecond = 60;
-        int millisecondsPerFrame = 1000 / framesPerSecond;
-        Sleeper sleeper = new Sleeper();
-        while (true) {
-            long startTime = System.currentTimeMillis(); // timing
-
-            DrawSurface d = this.gui.getDrawSurface();
-            this.sprites.drawAllOn(d);
-            gui.show(d);
-            this.sprites.notifyAllTimePassed();
-
-            // timing
-            long usedTime = System.currentTimeMillis() - startTime;
-            long milliSecondLeftToSleep = millisecondsPerFrame - usedTime;
-            if (milliSecondLeftToSleep > 0) {
-                sleeper.sleepFor(milliSecondLeftToSleep);
-            }
-        }
+    public boolean isHasBlocks() {
+        return this.hasBlocks;
     }
 
     private void addBlocks(List<Block> blocks) {
@@ -135,7 +121,51 @@ public class Game {
         return blockList;
     }
 
+    // Run the game -- start the animation loop.
+    public void run() {
+        int framesPerSecond = 60;
+        int millisecondsPerFrame = 1000 / framesPerSecond;
+        Sleeper sleeper = new Sleeper();
+        while (this.hasBlocks) {
+            long startTime = System.currentTimeMillis(); // timing
+
+            DrawSurface d = this.gui.getDrawSurface();
+            this.sprites.drawAllOn(d);
+            gui.show(d);
+            this.sprites.notifyAllTimePassed();
+
+            // timing
+            long usedTime = System.currentTimeMillis() - startTime;
+            long milliSecondLeftToSleep = millisecondsPerFrame - usedTime;
+            if (milliSecondLeftToSleep > 0) {
+                sleeper.sleepFor(milliSecondLeftToSleep);
+            }
+        }
+        this.gui.close();
+    }
+
+    public void addSprite(Sprite s) {
+        sprites.addSprite(s);
+    }
+
+    public void addCollidable(Collidable c) {
+        environment.addCollidable(c);
+    }
+
+    public void removeSprite(Sprite s) {
+        this.sprites.removeSprite(s);
+    }
+
+    public void removeCollidable(Collidable c) {
+        this.environment.removeCollidable(c);
+    }
+
+    public void endGame() {
+        this.hasBlocks = false;
+    }
+
     private List<Block> makeBlocks(int blocksOnFirstLine, double widthFill, int numOfLines, double startY, int blockDiff) {
+        Block.setHitCount(1);
         int blockWidth = ((int) (((this.background.width() - 2 * BORDER_WIDTH) * widthFill) / blocksOnFirstLine));
         double startX = this.background.width() - BORDER_WIDTH;
         List<Block> blockList = new ArrayList<>();
@@ -145,14 +175,10 @@ public class Game {
             startY += BLOCK_HEIGHT;
             blocksOnFirstLine -= blockDiff;
         }
+        HitListener hitListener = new BlockRemover(this, blockList.size());
+        for (Block block : blockList) {
+            block.addHitListener(hitListener);
+        }
         return blockList;
-    }
-
-    public void addSprite(Sprite s) {
-        sprites.addSprite(s);
-    }
-
-    public void addCollidable(Collidable c) {
-        environment.addCollidable(c);
     }
 }

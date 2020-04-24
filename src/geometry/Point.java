@@ -139,4 +139,12 @@ public class Point {
     public boolean equals(Point other) {
         return Utilities.compareDoubles(this.x, other.x) && Utilities.compareDoubles(this.y, other.y);
     }
+
+    @Override
+    public String toString() {
+        return "Point{" +
+                "x=" + x +
+                ", y=" + y +
+                '}';
+    }
 }
