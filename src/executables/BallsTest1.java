@@ -1,7 +1,7 @@
 package executables;
 
 import game.objects.Ball;
-import game.Velocity;
+import game.objects.attributes.Velocity;
 import geometry.Point;
 import biuoop.DrawSurface;
 import biuoop.GUI;

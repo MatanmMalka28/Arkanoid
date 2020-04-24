@@ -1,5 +1,6 @@
-package game;
+package game.runners;
 
+import game.GameGenerator;
 import game.objects.Ball;
 import game.objects.Block;
 import game.objects.Collidable;
@@ -142,7 +143,7 @@ public class Frame {
      */
     public void moveBalls() {
         for (Ball ball : this.ballList) {
-            ball.moveOneStep(true);
+            ball.moveOneStep();
         }
     }
 

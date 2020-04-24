@@ -1,8 +1,12 @@
 package geometry;
 
+import biuoop.DrawSurface;
+import org.omg.CORBA.MARSHAL;
+import utilities.Diagonal;
 import utilities.Direction;
 import utilities.Utilities;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -21,16 +25,7 @@ public class Rectangle {
      * The Bottom right.
      */
     bottomRight;
-    /**
-     * The Width.
-     */
-    private double width, /**
-     * The Height.
-     */
-    height;
-    /**
-     * The Edges map.
-     */
+
     private Map<Direction, Line> edgesMap;
 
     /**
@@ -45,8 +40,6 @@ public class Rectangle {
         this.topLeft = topLeft;
         this.bottomRight = new Point(topLeft.getX() + Math.abs(width), topLeft.getY() + Math.abs(height));
         this.edgesMap = Utilities.translatePointsToBorders(topLeft, this.bottomRight);
-        this.width = width;
-        this.height = height;
     }
 
     /**
@@ -69,8 +62,6 @@ public class Rectangle {
         this.topLeft = topLeft;
         this.bottomRight = bottomRight;
         this.edgesMap = Utilities.translatePointsToBorders(this.topLeft, this.bottomRight);
-        this.width = this.edgesMap.get(Direction.TOP).length();
-        this.height = this.edgesMap.get(Direction.LEFT).length();
     }
 
     /**
@@ -91,22 +82,22 @@ public class Rectangle {
         return this.bottomRight.copy();
     }
 
-    /**
-     * Gets width.
-     *
-     * @return the width
-     */
-    public double getWidth() {
-        return width;
+    public Line getDiagonal(Diagonal diagonal) {
+        switch (diagonal) {
+            default:
+            case TOP_LEFT_TO_BOTTOM_RIGHT:
+                return new Line(this.topLeft, this.bottomRight);
+            case BOTTOM_LEFT_TO_TOP_RIGHT:
+                Point topRight = new Point(this.bottomRight.getX(), this.topLeft.getY());
+                Point bottomLeft = new Point(this.topLeft.getX(), this.bottomRight.getY());
+                return new Line(bottomLeft, topRight);
+        }
     }
 
-    /**
-     * Gets height.
-     *
-     * @return the height
-     */
-    public double getHeight() {
-        return height;
+    public static void drawEdges(Rectangle rect, DrawSurface d, Color color) {
+        d.setColor(color);
+        d.drawRectangle(((int) rect.getTopLeft().getX()), ((int) rect.getTopLeft().getY()),
+                ((int) rect.width()), ((int) rect.height()));
     }
 
     /**
@@ -202,5 +193,29 @@ public class Rectangle {
         Rectangle rectangle = (Rectangle) o;
         return topLeft.equals(rectangle.topLeft)
                 && bottomRight.equals(rectangle.bottomRight);
+    }
+
+    /**
+     * Gets width.
+     *
+     * @return the width
+     */
+    public double width() {
+        return Math.abs(topLeft.getX() - bottomRight.getX());
+    }
+
+    /**
+     * Gets height.
+     *
+     * @return the height
+     */
+    public double height() {
+        return Math.abs(topLeft.getY() - bottomRight.getY());
+    }
+
+    public static void fillRect(Rectangle rect, DrawSurface d, Color color) {
+        d.setColor(color);
+        d.fillRectangle(((int) rect.getTopLeft().getX()), ((int) rect.getTopLeft().getY()),
+                ((int) rect.width()), ((int) rect.height()));
     }
 }

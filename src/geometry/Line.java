@@ -238,21 +238,8 @@ public class Line {
                 || (this.start.equals(other.end) && this.end.equals(other.start));
     }
 
-    public Line shiftLine(double amount, Axis axis) {
-        Line line;
-        switch (axis) {
-            case Y:
-                line = new Line(this.start.getX(), this.start.getY() + amount, this.end.getX(), this.end.getY() + amount);
-                break;
-            case X:
-                line = new Line(this.start.getX() + amount, this.start.getY(), this.end.getX() + amount, this.end.getY());
-                break;
-            default:
-            case XY:
-                line = new Line(this.start.getX() + amount, this.start.getY() + amount, this.end.getX() + amount, this.end.getY() + amount);
-                break;
-        }
-        return line;
+    public Line shiftLine(double shiftSize, Axis axis) {
+        return new Line(this.start.shiftPoint(shiftSize, axis), this.end.shiftPoint(shiftSize, axis));
     }
 
     public void drawOn(DrawSurface d) {

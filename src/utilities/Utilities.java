@@ -10,6 +10,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.TreeMap;
 
 /**
@@ -19,7 +20,8 @@ public class Utilities {
     /**
      * The constant TOLERANCE.
      */
-    private static final double TOLERANCE = Math.pow(10, -4);
+    private static final double TOLERANCE = Math.pow(10, -8);
+    private static Random rand = new Random();
 
     /**
      * Compare doubles boolean.
@@ -70,7 +72,7 @@ public class Utilities {
     }
 
     /**
-     * Calculate angle double.
+     * Calculate an angle based on x's and y's sign value.
      *
      * @param y the y
      * @param x the x
@@ -99,5 +101,9 @@ public class Utilities {
             }
         }
         return angle;
+    }
+
+    public static int getSign() {
+        return rand.nextBoolean() ? 1 : -1;
     }
 }

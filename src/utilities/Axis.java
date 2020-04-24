@@ -15,5 +15,9 @@ public enum Axis {
     /**
      * Xy axis.
      */
-    XY
+    XY,
+    /**
+     * Yx axis.
+     */
+    YX
 }

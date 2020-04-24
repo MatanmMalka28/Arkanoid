@@ -2,10 +2,14 @@ package game;
 
 import game.objects.Ball;
 import game.objects.Block;
+import game.objects.attributes.Velocity;
 import geometry.GeometryGenerator;
 import geometry.Point;
+import utilities.Direction;
 
-import java.awt.Color;
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The GameGenerator class is used to create randomized game objects.
@@ -291,5 +295,24 @@ public class GameGenerator {
         this.topLeft = newTopLeft;
         this.bottomRight = newBottomRight;
         this.generator = new GeometryGenerator(this.topLeft, this.bottomRight);
+    }
+
+    public static List<Block> makeBlockLine(int numOfBlocks, Point startPoint, int width, int height, Color color, Direction buildDirection) {
+        int sign;
+        switch (buildDirection) {
+            case LEFT:
+                sign = -1;
+                break;
+            default:
+            case RIGHT:
+                sign = 1;
+        }
+        List<Block> blocks = new ArrayList<>();
+        double x = startPoint.getX() + width * sign;
+        double y = startPoint.getY();
+        for (int i = 0; i < numOfBlocks; i++, x += width * sign) {
+            blocks.add(new Block(new Point(x, y), width, height, color));
+        }
+        return blocks;
     }
 }

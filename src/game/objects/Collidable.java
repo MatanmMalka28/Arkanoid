@@ -1,7 +1,7 @@
 package game.objects;
 
 import game.objects.dataStructers.CollisionInfo;
-import game.Velocity;
+import game.objects.attributes.Velocity;
 import geometry.Line;
 import geometry.Point;
 import geometry.Rectangle;
@@ -27,6 +27,8 @@ public interface Collidable {
      * @return the velocity
      */
     Velocity hit(CollisionInfo collisionInfo, Velocity currentVelocity);
+
+    Velocity hit(Point collisionPoint, Velocity currentVelocity);
 
     /**
      * Gets collision info.

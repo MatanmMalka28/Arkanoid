@@ -5,70 +5,67 @@ import geometry.Line;
 import geometry.Point;
 import utilities.Direction;
 
-/**
- * The type Collision info.
- */
-public class CollisionInfo {
-    /**
-     * The Collision point.
-     */
+import java.util.Objects;
+
+public class CollisionInfo implements Comparable {
     private Point collisionPoint;
-    /**
-     * The Collision object.
-     */
     private Collidable collisionObject;
-    /**
-     * The Hit direction.
-     */
     private Direction hitDirection;
 
 
-    /**
-     * Instantiates a new Collision info.
-     *
-     * @param collisionPoint  the collision point
-     * @param collisionObject the collision object
-     */
     public CollisionInfo(Point collisionPoint, Collidable collisionObject) {
         this.collisionPoint = collisionPoint;
         this.collisionObject = collisionObject;
         this.hitDirection = this.collisionObject.getCollisionRectangle().pointOnEdge(this.collisionPoint);
     }
 
-    /**
-     * Gets collision point.
-     *
-     * @return the collision point
-     */
     public Point getCollisionPoint() {
         return this.collisionPoint;
     }
 
-    /**
-     * Gets collision object.
-     *
-     * @return the collision object
-     */
     public Collidable getCollisionObject() {
         return this.collisionObject;
     }
 
-    /**
-     * Gets hit direction.
-     *
-     * @return the hit direction
-     */
     public Direction getHitDirection() {
         return this.hitDirection;
     }
 
-    /**
-     * Distance double.
-     *
-     * @param trajectory the trajectory
-     * @return the double
-     */
     public double distance(Line trajectory) {
         return this.collisionPoint.distance(trajectory.start());
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        if (this.equals(o)) {
+            return 0;
+        } else {
+            return 1;
+        }
+    }
+
+    public boolean equals(CollisionInfo other) {
+        if (other != null) {
+            return this.collisionObject.equals(other.collisionObject) &&
+                    this.hitDirection.directionParallel(other.hitDirection);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(collisionObject);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof CollisionInfo)) {
+            return false;
+        }
+        CollisionInfo info = (CollisionInfo) o;
+        return this.equals(info);
     }
 }

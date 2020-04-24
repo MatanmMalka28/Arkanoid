@@ -1,4 +1,4 @@
-package game;
+package game.objects.attributes;
 
 import geometry.Point;
 import utilities.Utilities;

@@ -1,5 +1,6 @@
 package geometry;
 
+import utilities.Axis;
 import utilities.Utilities;
 
 import java.util.Objects;
@@ -85,6 +86,31 @@ public class Point {
      */
     public Point copy() {
         return new Point(this);
+    }
+
+    /**
+     * Shifts point by a given factor.
+     *
+     * @param shiftSize the shift size
+     * @param axis      the axis
+     * @return the point after the shift
+     */
+    public Point shiftPoint(double shiftSize, Axis axis) {
+        Point shiftedPoint;
+        switch (axis) {
+            case X:
+                shiftedPoint = new Point(this.x + shiftSize, this.y);
+                break;
+            case Y:
+                shiftedPoint = new Point(this.x, this.y + shiftSize);
+                break;
+            default:
+            case XY:
+            case YX:
+                shiftedPoint = new Point(this.x + shiftSize, this.y + shiftSize);
+                break;
+        }
+        return shiftedPoint;
     }
 
     @Override
