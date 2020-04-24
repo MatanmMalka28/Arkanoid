@@ -12,7 +12,7 @@ import geometry.Rectangle;
 import utilities.Axis;
 import utilities.Direction;
 
-import java.awt.*;
+import java.awt.Color;
 
 public class Paddle implements Sprite, Collidable {
     //Class constants used for define purposes
@@ -57,6 +57,7 @@ public class Paddle implements Sprite, Collidable {
         Velocity velocity;
         switch (direction) {
             case TOP:
+            case BOTH:
                 velocity = this.hitSectorHelp(collisionPoint, currentVelocity);
                 break;
             default:
@@ -64,13 +65,18 @@ public class Paddle implements Sprite, Collidable {
             case BOTTOM:
             case RIGHT:
                 velocity = this.paddle.hit(collisionPoint, currentVelocity);
+                break;
         }
         return velocity;
     }
 
     @Override
     public CollisionInfo getCollisionInfo(Line trajectory) {
-        return this.paddle.getCollisionInfo(trajectory);
+        CollisionInfo info = this.paddle.getCollisionInfo(trajectory);
+        if (info != null) {
+            info = new CollisionInfo(info.getCollisionPoint(), this);
+        }
+        return info;
     }
 
     @Override

@@ -95,7 +95,6 @@ public class GameEnvironment {
             if (info != null) {
                 collisionInfoList.add(info);
             }
-
         }
         if (collisionInfoList.isEmpty()) {
             return null;

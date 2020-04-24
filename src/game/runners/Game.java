@@ -89,7 +89,7 @@ public class Game {
                 Color.green, this.gui.getKeyboardSensor());
         paddle.addToGame(this);
         Ball ball = new Ball(this.background.width() / 2, this.background.height() * 0.6, 8, Color.WHITE);
-        ball.setVelocity(Velocity.fromAngleAndSpeed(120, 12));
+        ball.setVelocity(Velocity.fromAngleAndSpeed(0, 12));
         ball.setGameEnvironment(this.environment);
         this.addSprite(ball);
 

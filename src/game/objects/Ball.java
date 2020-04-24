@@ -349,6 +349,7 @@ public class Ball implements Sprite {
             this.trajectoryHitLastTurn = true;
         } else if (trajectoryHitLastTurn) {
             this.center = this.velocity.applyToPoint(this.center);
+            this.trajectoryHitLastTurn = false;
         } else {
             this.velocity = this.checkPerimeterHits();
             this.center = this.velocity.applyToPoint(this.center);
