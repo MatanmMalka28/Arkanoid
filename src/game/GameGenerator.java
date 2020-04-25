@@ -207,7 +207,7 @@ public class GameGenerator {
      * @param newDegLower the degree
      */
     public void setDegLower(double newDegLower) {
-        if (newDegLower >= 0 && newDegLower <= 360) {
+        if (newDegLower >= -360 && newDegLower <= 360) {
             this.degLower = newDegLower;
         }
     }

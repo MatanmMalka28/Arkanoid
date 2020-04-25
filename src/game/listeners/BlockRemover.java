@@ -30,8 +30,6 @@ public class BlockRemover implements HitListener {
             this.remainingBlocks.decrease(1);
             hitter.setGameEnvironment(this.game.getEnvironment());
         }
-        if (this.remainingBlocks.getValue() == 0) {
-            this.game.endGame();
-        }
+
     }
 }

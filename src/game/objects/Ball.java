@@ -3,6 +3,7 @@ package game.objects;
 import game.objects.collections.GameEnvironment;
 import game.objects.attributes.Velocity;
 import game.objects.dataStructers.CollisionInfo;
+import game.runners.Game;
 import geometry.Line;
 import geometry.Point;
 import geometry.Rectangle;
@@ -21,11 +22,11 @@ import java.util.TreeSet;
 /**
  * The type Ball.
  */
-public class Ball implements Sprite {
+public class Ball implements Sprite, GameObject {
     /**
      * The constant DIFF_PERCENTAGE.
      */
-    private static final double DIFF_PERCENTAGE = 1;
+    private static final double DIFF_PERCENTAGE = 0.98;
     /**
      * The constant debugMode.
      */
@@ -139,7 +140,6 @@ public class Ball implements Sprite {
      * @return the game environment
      */
     public GameEnvironment getGameEnvironment() {
-        //todo: make copy
         return this.gameEnvironment.copy();
     }
 
@@ -396,5 +396,16 @@ public class Ball implements Sprite {
                 break;
         }
         return v;
+    }
+
+    @Override
+    public void removeFromGame(Game game) {
+        game.removeSprite(this);
+    }
+
+    @Override
+    public void addToGame(Game game) {
+        game.addSprite(this);
+        game.assignGameEnvironment(this);
     }
 }

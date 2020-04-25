@@ -22,7 +22,7 @@ import java.util.Objects;
 /**
  * The type Block.
  */
-public class Block implements Collidable, Sprite, HitNotifier {
+public class Block implements Collidable, Sprite, HitNotifier, GameObject {
     private static final int DEFAULT_HIT_COUNT = 5;
     /**
      * The constant DEFAULT_COLOR.
@@ -189,9 +189,23 @@ public class Block implements Collidable, Sprite, HitNotifier {
         game.removeSprite(this);
     }
 
-    @Override
-    public Velocity hit(Ball hitter, CollisionInfo collisionInfo, Velocity currentVelocity) {
-        return this.hit(hitter, collisionInfo.getCollisionPoint(), currentVelocity);
+    protected void decreaseHit() {
+        this.hitCount--;
+    }
+
+    protected void drawText(DrawSurface d) {
+        String text;
+        if (this.hitCount > 0) {
+            text = String.valueOf(this.hitCount);
+        } else {
+            text = "X";
+        }
+        Point intersection = this.rectangle.getDiagonal(Diagonal.TOP_LEFT_TO_BOTTOM_RIGHT).intersectionWith(this.rectangle.getDiagonal(Diagonal.BOTTOM_LEFT_TO_TOP_RIGHT));
+        if (intersection != null) {
+            double size = -0.5 * text.length();
+            intersection = intersection.shiftPoint(size, Axis.X).shiftPoint(this.height() / 4, Axis.Y);
+            d.drawText(((int) intersection.getX()), ((int) intersection.getY()), text, 12);
+        }
     }
 
     @Override
@@ -227,10 +241,10 @@ public class Block implements Collidable, Sprite, HitNotifier {
         return direction;
     }
 
-    private void decreaseHit() {
-        if (this.hitCount > 0) {
-            this.hitCount--;
-        }
+    @Override
+    public void addToGame(Game game) {
+        game.addCollidable(this);
+        game.addSprite(this);
     }
 
     /**
@@ -244,21 +258,9 @@ public class Block implements Collidable, Sprite, HitNotifier {
         this.drawText(d);
     }
 
-    protected void drawText(DrawSurface d) {
-        String text;
-        if (this.hitCount > 0) {
-            text = String.valueOf(this.hitCount);
-        } else if (this.hitCount == 0) {
-            text = "X";
-        } else {
-            text = "";
-        }
-        Point intersection = this.rectangle.getDiagonal(Diagonal.TOP_LEFT_TO_BOTTOM_RIGHT).intersectionWith(this.rectangle.getDiagonal(Diagonal.BOTTOM_LEFT_TO_TOP_RIGHT));
-        if (intersection != null) {
-            double size = -0.5 * text.length();
-            intersection = intersection.shiftPoint(size, Axis.X).shiftPoint(this.height() / 4, Axis.Y);
-            d.drawText(((int) intersection.getX()), ((int) intersection.getY()), text, 12);
-        }
+    @Override
+    public Velocity hit(Ball hitter, CollisionInfo collisionInfo, Velocity currentVelocity) {
+        return this.hit(hitter, collisionInfo.getCollisionPoint(), currentVelocity);
     }
 
     public double height() {

@@ -155,7 +155,8 @@ public class Paddle implements Sprite, Collidable {
     }
 
     public void drawOn(DrawSurface d) {
-        this.paddle.drawOn(d);
+        Rectangle.fillRect(this.paddle.getRectangle(), d, this.paddle.getColor());
+        Rectangle.drawEdges(this.paddle.getRectangle(), d, Color.BLACK);
     }
 
     // Sprite
