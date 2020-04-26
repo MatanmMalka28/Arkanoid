@@ -1,4 +1,4 @@
-package game.objects;
+package game.objects.sprites;
 
 import biuoop.DrawSurface;
 

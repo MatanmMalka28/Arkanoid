@@ -21,8 +21,18 @@ public class Counter {
         this.value += number;
     }
 
+    public void increase() {
+        this.value++;
+    }
+
     // subtract number from current count.
     public void decrease(int number) {
         this.value -= number;
     }
+
+    public void decrease() {
+        this.value--;
+    }
+
+
 }

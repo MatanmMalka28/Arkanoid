@@ -2,7 +2,7 @@ package game.listeners;
 
 import game.managers.Counter;
 import game.objects.Ball;
-import game.objects.Block;
+import game.objects.blocks.Block;
 import game.runners.Game;
 
 // a BlockRemover is in charge of removing blocks from the game, as well as keeping count
@@ -24,7 +24,7 @@ public class BlockRemover implements HitListener {
     // from the game. Remember to remove this listener from the block
     // that is being removed from the game.
     public void hitEvent(Block beingHit, Ball hitter) {
-        if (beingHit.getHitPoints() == 0) {
+        if (beingHit.getHitCount() == 0) {
             beingHit.removeFromGame(this.game);
             beingHit.removeHitListener(this);
             this.remainingBlocks.decrease(1);

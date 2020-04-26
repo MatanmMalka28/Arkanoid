@@ -2,12 +2,11 @@ package game.runners;
 
 import game.GameGenerator;
 import game.objects.Ball;
-import game.objects.Block;
+import game.objects.blocks.Block;
 import game.objects.Collidable;
 import game.objects.collections.GameEnvironment;
 import geometry.Point;
 import biuoop.DrawSurface;
-import org.omg.CORBA.BAD_CONTEXT;
 
 import java.awt.Color;
 import java.util.ArrayList;

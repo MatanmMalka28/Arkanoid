@@ -1,7 +1,7 @@
 package game;
 
 import game.objects.Ball;
-import game.objects.Block;
+import game.objects.blocks.Block;
 import game.objects.attributes.Velocity;
 import geometry.GeometryGenerator;
 import geometry.Point;

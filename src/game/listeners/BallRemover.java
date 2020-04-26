@@ -1,8 +1,7 @@
 package game.listeners;
 
-import game.managers.Counter;
 import game.objects.Ball;
-import game.objects.Block;
+import game.objects.blocks.Block;
 import game.runners.Game;
 
 public class BallRemover implements HitListener {

@@ -1,7 +1,7 @@
 package utilities;
 
 
-import game.objects.Block;
+import game.objects.blocks.Block;
 import game.objects.Collidable;
 import geometry.Line;
 import geometry.Point;

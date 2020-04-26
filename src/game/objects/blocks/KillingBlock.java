@@ -1,4 +1,4 @@
-package game.objects;
+package game.objects.blocks;
 
 import biuoop.DrawSurface;
 import game.listeners.BallRemover;

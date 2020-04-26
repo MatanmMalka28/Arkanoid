@@ -1,9 +1,13 @@
-package game.objects;
+package game.objects.blocks;
 
 import game.listeners.HitListener;
 import game.listeners.HitNotifier;
+import game.objects.Ball;
+import game.objects.Collidable;
+import game.objects.GameObject;
 import game.objects.dataStructers.CollisionInfo;
 import game.objects.attributes.Velocity;
+import game.objects.sprites.Sprite;
 import game.runners.Game;
 import geometry.Line;
 import geometry.Point;
@@ -22,13 +26,14 @@ import java.util.Objects;
 /**
  * The type Block.
  */
-public class Block implements Collidable, Sprite, HitNotifier, GameObject {
+public class Block implements Collidable, HitNotifier, GameObject {
     private static final int DEFAULT_HIT_COUNT = 5;
     /**
      * The constant DEFAULT_COLOR.
      */
     private static final Color DEFAULT_COLOR = Color.gray;
     private static int HIT_COUNT = DEFAULT_HIT_COUNT;
+    private static boolean drawHits = true;
     /**
      * The Rectangle.
      */
@@ -172,42 +177,6 @@ public class Block implements Collidable, Sprite, HitNotifier, GameObject {
         return rectangle.getBottomRight();
     }
 
-    public static void setHitCount(int hitCount) {
-        HIT_COUNT = hitCount;
-    }
-
-    public double width() {
-        return rectangle.width();
-    }
-
-    public int getHitPoints() {
-        return this.hitCount;
-    }
-
-    public void removeFromGame(Game game) {
-        game.removeCollidable(this);
-        game.removeSprite(this);
-    }
-
-    protected void decreaseHit() {
-        this.hitCount--;
-    }
-
-    protected void drawText(DrawSurface d) {
-        String text;
-        if (this.hitCount > 0) {
-            text = String.valueOf(this.hitCount);
-        } else {
-            text = "X";
-        }
-        Point intersection = this.rectangle.getDiagonal(Diagonal.TOP_LEFT_TO_BOTTOM_RIGHT).intersectionWith(this.rectangle.getDiagonal(Diagonal.BOTTOM_LEFT_TO_TOP_RIGHT));
-        if (intersection != null) {
-            double size = -0.5 * text.length();
-            intersection = intersection.shiftPoint(size, Axis.X).shiftPoint(this.height() / 4, Axis.Y);
-            d.drawText(((int) intersection.getX()), ((int) intersection.getY()), text, 12);
-        }
-    }
-
     @Override
     public CollisionInfo getCollisionInfo(Line trajectory) {
         List<Point> intersectionPoints = this.rectangle.intersectionPoints(trajectory);
@@ -241,53 +210,24 @@ public class Block implements Collidable, Sprite, HitNotifier, GameObject {
         return direction;
     }
 
-    @Override
-    public void addToGame(Game game) {
-        game.addCollidable(this);
-        game.addSprite(this);
+    public int getHitCount() {
+        return this.hitCount;
     }
 
-    /**
-     * Draw on.
-     *
-     * @param d the d
-     */
-    public void drawOn(DrawSurface d) {
-        Rectangle.fillRect(this.rectangle, d, this.color);
-        Rectangle.drawEdges(this.rectangle, d, Color.BLACK);
-        this.drawText(d);
+    public static void setHitCount(int hitCount) {
+        HIT_COUNT = hitCount;
     }
 
-    @Override
-    public Velocity hit(Ball hitter, CollisionInfo collisionInfo, Velocity currentVelocity) {
-        return this.hit(hitter, collisionInfo.getCollisionPoint(), currentVelocity);
+    public static void setDrawHits(boolean drawHits) {
+        Block.drawHits = drawHits;
+    }
+
+    public double width() {
+        return rectangle.width();
     }
 
     public double height() {
         return rectangle.height();
-    }
-
-    @Override
-    public void timePassed() {
-        //nothing
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(rectangle, color);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof Block)) {
-            return false;
-        }
-
-        Block block = (Block) o;
-        return this.equals(block);
     }
 
     /**
@@ -298,6 +238,40 @@ public class Block implements Collidable, Sprite, HitNotifier, GameObject {
      */
     public boolean equals(Block other) {
         return this.rectangle.equals(other.rectangle) && this.color.equals(other.color);
+    }
+
+    private void notifyHit(Ball hitter) {
+        // Make a copy of the hitListeners before iterating over them.
+        List<HitListener> listeners = new ArrayList<>(this.hitListeners);
+        // Notify all listeners about a hit event:
+        for (HitListener hl : listeners) {
+            hl.hitEvent(this, hitter);
+        }
+    }
+
+    protected void decreaseHit() {
+        this.hitCount--;
+        this.color = this.color.darker();
+    }
+
+    protected void drawText(DrawSurface d) {
+        String text;
+        if (this.hitCount > 0) {
+            text = String.valueOf(this.hitCount);
+        } else {
+            text = "X";
+        }
+        Point intersection = this.rectangle.getDiagonal(Diagonal.TOP_LEFT_TO_BOTTOM_RIGHT).intersectionWith(this.rectangle.getDiagonal(Diagonal.BOTTOM_LEFT_TO_TOP_RIGHT));
+        if (intersection != null) {
+            double size = -0.5 * text.length();
+            intersection = intersection.shiftPoint(size, Axis.X).shiftPoint(this.height() / 4, Axis.Y);
+            d.drawText(((int) intersection.getX()), ((int) intersection.getY()), text, 12);
+        }
+    }
+
+    @Override
+    public Velocity hit(Ball hitter, CollisionInfo collisionInfo, Velocity currentVelocity) {
+        return this.hit(hitter, collisionInfo.getCollisionPoint(), currentVelocity);
     }
 
     @Override
@@ -326,13 +300,38 @@ public class Block implements Collidable, Sprite, HitNotifier, GameObject {
         return v;
     }
 
-    private void notifyHit(Ball hitter) {
-        // Make a copy of the hitListeners before iterating over them.
-        List<HitListener> listeners = new ArrayList<HitListener>(this.hitListeners);
-        // Notify all listeners about a hit event:
-        for (HitListener hl : listeners) {
-            hl.hitEvent(this, hitter);
+    @Override
+    public void addToGame(Game game) {
+        game.addCollidable(this);
+        game.addSprite(this);
+    }
+
+    public void removeFromGame(Game game) {
+        game.removeCollidable(this);
+        game.removeSprite(this);
+    }
+
+    @Override
+    public void timePassed() {
+        //nothing
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(rectangle, color);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
         }
+        if (!(o instanceof Block)) {
+            return false;
+        }
+
+        Block block = (Block) o;
+        return this.equals(block);
     }
 
     @Override
@@ -343,5 +342,18 @@ public class Block implements Collidable, Sprite, HitNotifier, GameObject {
     @Override
     public void removeHitListener(HitListener hl) {
         this.hitListeners.remove(hl);
+    }
+
+    /**
+     * Draw on.
+     *
+     * @param d the d
+     */
+    public void drawOn(DrawSurface d) {
+        Rectangle.fillRect(this.rectangle, d, this.color);
+        Rectangle.drawEdges(this.rectangle, d, Color.BLACK);
+        if (drawHits) {
+            this.drawText(d);
+        }
     }
 }

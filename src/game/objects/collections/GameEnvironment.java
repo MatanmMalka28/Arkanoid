@@ -1,7 +1,6 @@
 package game.objects.collections;
 
 import game.objects.Collidable;
-import game.objects.Sprite;
 import game.objects.dataStructers.CollisionInfo;
 import geometry.Line;
 

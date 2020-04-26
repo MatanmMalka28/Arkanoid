@@ -1,5 +1,6 @@
 package game.objects;
 
+import game.listeners.MovementListener;
 import game.objects.collections.GameEnvironment;
 import game.objects.attributes.Velocity;
 import game.objects.dataStructers.CollisionInfo;
@@ -22,7 +23,7 @@ import java.util.TreeSet;
 /**
  * The type Ball.
  */
-public class Ball implements Sprite, GameObject {
+public class Ball implements GameObject, MovementListener {
     /**
      * The constant DIFF_PERCENTAGE.
      */
@@ -56,6 +57,7 @@ public class Ball implements Sprite, GameObject {
      */
     private GameEnvironment gameEnvironment;
     private boolean trajectoryHitLastTurn;
+    private boolean paused = true;
 
     // constructor
 
@@ -144,12 +146,36 @@ public class Ball implements Sprite, GameObject {
     }
 
     /**
+     * Gets x.
+     *
+     * @return the x
+     */
+// accessors
+    public int getX() {
+        return ((int) this.center.getX());
+    }
+
+    /**
+     * Gets y.
+     *
+     * @return the y
+     */
+    public int getY() {
+        return ((int) this.center.getY());
+    }
+
+    private Rectangle getRectPerimeter() {
+        double diff = this.radius * DIFF_PERCENTAGE;
+        return new Rectangle(this.center.shiftPoint(-diff, Axis.XY), this.center.shiftPoint(diff, Axis.XY));
+    }
+
+    /**
      * Sets game environment.
      *
      * @param environment the game environment
      */
     public void setGameEnvironment(GameEnvironment environment) {
-        this.gameEnvironment = environment.copy();
+        this.gameEnvironment = environment;
     }
 
     /**
@@ -194,6 +220,26 @@ public class Ball implements Sprite, GameObject {
 
     public void setGameBorders(Point topLeft, Point bottomRight, int size) {
         this.gameEnvironment.addCollidable(Utilities.translatePointsToBlocks(topLeft, bottomRight, size));
+    }
+
+    public void moveOneStep() {
+        if (!this.paused) {
+            Line trajectory = this.calcTrajectory();
+            CollisionInfo info = this.gameEnvironment.getClosestCollision(trajectory);
+            if (info != null) {
+                Velocity v = Velocity.fromAngleAndSpeed(this.velocity.getAngle(), this.radius);
+                v = v.changeSign(-1, -1);
+                this.center = v.applyToPoint(info.getCollisionPoint());
+                this.velocity = info.getCollisionObject().hit(this, info, this.velocity.copy());
+                this.trajectoryHitLastTurn = true;
+            } else if (trajectoryHitLastTurn) {
+                this.center = this.velocity.applyToPoint(this.center);
+                this.trajectoryHitLastTurn = false;
+            } else {
+                this.velocity = this.checkPerimeterHits();
+                this.center = this.velocity.applyToPoint(this.center);
+            }
+        }
     }
 
     /**
@@ -261,42 +307,6 @@ public class Ball implements Sprite, GameObject {
         return v;
     }
 
-    /**
-     * Draw on.
-     *
-     * @param d the d
-     */
-// draw the ball on the given DrawSurface
-    public void drawOn(DrawSurface d) {
-        d.setColor(this.color);
-        d.fillCircle(this.getX(), this.getY(), this.radius);
-        d.setColor(Color.BLACK);
-        d.drawCircle(this.getX(), this.getY(), this.radius);
-        //for debug:
-        if (debugMode) {
-            this.debugDraw(d);
-        }
-    }
-
-    /**
-     * Gets x.
-     *
-     * @return the x
-     */
-// accessors
-    public int getX() {
-        return ((int) this.center.getX());
-    }
-
-    /**
-     * Gets y.
-     *
-     * @return the y
-     */
-    public int getY() {
-        return ((int) this.center.getY());
-    }
-
     private void debugDraw(DrawSurface d) {
         d.setColor(Color.red);
         this.calcTrajectory().drawOn(d);
@@ -312,11 +322,6 @@ public class Ball implements Sprite, GameObject {
         return new Line(this.center, this.nextStep());
     }
 
-    private Rectangle getRectPerimeter() {
-        double diff = this.radius * DIFF_PERCENTAGE;
-        return new Rectangle(this.center.shiftPoint(-diff, Axis.XY), this.center.shiftPoint(diff, Axis.XY));
-    }
-
     /**
      * Next step point.
      *
@@ -330,29 +335,6 @@ public class Ball implements Sprite, GameObject {
             return this.velocity.applyToPoint(this.center);
         }
 
-    }
-
-    @Override
-    public void timePassed() {
-        this.moveOneStep();
-    }
-
-    public void moveOneStep() {
-        Line trajectory = this.calcTrajectory();
-        CollisionInfo info = this.gameEnvironment.getClosestCollision(trajectory);
-        if (info != null) {
-            Velocity v = Velocity.fromAngleAndSpeed(this.velocity.getAngle(), this.radius);
-            v = v.changeSign(-1, -1);
-            this.center = v.applyToPoint(info.getCollisionPoint());
-            this.velocity = info.getCollisionObject().hit(this, info, this.velocity.copy());
-            this.trajectoryHitLastTurn = true;
-        } else if (trajectoryHitLastTurn) {
-            this.center = this.velocity.applyToPoint(this.center);
-            this.trajectoryHitLastTurn = false;
-        } else {
-            this.velocity = this.checkPerimeterHits();
-            this.center = this.velocity.applyToPoint(this.center);
-        }
     }
 
     private Velocity checkPerimeterHits() {
@@ -398,14 +380,43 @@ public class Ball implements Sprite, GameObject {
         return v;
     }
 
+    /**
+     * Draw on.
+     *
+     * @param d the d
+     */
+// draw the ball on the given DrawSurface
+    public void drawOn(DrawSurface d) {
+        d.setColor(this.color);
+        d.fillCircle(this.getX(), this.getY(), this.radius);
+        d.setColor(Color.BLACK);
+        d.drawCircle(this.getX(), this.getY(), this.radius);
+        //for debug:
+        if (debugMode) {
+            this.debugDraw(d);
+        }
+    }
+
+    @Override
+    public void timePassed() {
+        this.moveOneStep();
+    }
+
     @Override
     public void removeFromGame(Game game) {
         game.removeSprite(this);
+        game.removeMovementListener(this);
     }
 
     @Override
     public void addToGame(Game game) {
         game.addSprite(this);
         game.assignGameEnvironment(this);
+        game.assignMovementListener(this);
+    }
+
+    @Override
+    public void movementEvent() {
+        this.paused = false;
     }
 }

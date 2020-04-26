@@ -1,4 +1,4 @@
-package game.objects;
+package game.objects.sprites;
 
 import biuoop.DrawSurface;
 import geometry.Point;
@@ -32,8 +32,20 @@ public class Background implements Sprite {
         Rectangle.fillRect(this.rectangle, d, this.color);
     }
 
+    public Point getTopLeft() {
+        return rectangle.getTopLeft();
+    }
+
     @Override
     public void timePassed() {
         //nothing
+    }
+
+    public void setColor(Color color) {
+        this.color = color;
+    }
+
+    public static void drawBackgroundEdges(Background background, DrawSurface d, Color color) {
+        Rectangle.drawEdges(background.rectangle, d, color);
     }
 }

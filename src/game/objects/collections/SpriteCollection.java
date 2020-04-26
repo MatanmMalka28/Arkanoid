@@ -1,7 +1,7 @@
 package game.objects.collections;
 
 import biuoop.DrawSurface;
-import game.objects.Sprite;
+import game.objects.sprites.Sprite;
 
 import java.util.ArrayList;
 import java.util.List;
