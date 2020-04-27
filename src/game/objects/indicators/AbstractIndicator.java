@@ -7,7 +7,7 @@ import game.objects.GameObject;
 import game.runners.Game;
 import geometry.Point;
 
-import java.awt.*;
+import java.awt.Color;
 
 public abstract class AbstractIndicator implements GameObject {
     private static final int FONT_SIZE = 16;

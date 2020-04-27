@@ -157,15 +157,15 @@ public class Line {
             return null;
         } else if (this.isVertical) {
             x = this.start.getX();
-            y = other.getSlope() * x + other.getB();
+            y = other.a * x + other.b;
             intersection = new Point(x, y);
         } else if (other.isVertical) {
             x = other.start.getX();
-            y = this.getSlope() * x + this.getB();
+            y = this.a * x + this.b;
             intersection = new Point(x, y);
         } else {
-            x = (this.getB() - other.getB()) / (other.getSlope() - this.getSlope());
-            y = this.getSlope() * x + this.getB();
+            x = (this.b - other.b) / (other.b - this.b);
+            y = this.a * x + this.b;
             intersection = new Point(x, y);
         }
         return this.pointOnLine(intersection) && other.pointOnLine(intersection) ? intersection : null;
