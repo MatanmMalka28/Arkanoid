@@ -56,7 +56,13 @@ public class Ball implements GameObject, MovementListener {
      * The Game environment.
      */
     private GameEnvironment gameEnvironment;
+    /**
+     * The Trajectory hit last turn.
+     */
     private boolean trajectoryHitLastTurn;
+    /**
+     * The Paused.
+     */
     private boolean paused = true;
 
     // constructor
@@ -164,6 +170,11 @@ public class Ball implements GameObject, MovementListener {
         return ((int) this.center.getY());
     }
 
+    /**
+     * Gets rect perimeter.
+     *
+     * @return the rect perimeter
+     */
     private Rectangle getRectPerimeter() {
         double diff = this.radius * DIFF_PERCENTAGE;
         return new Rectangle(this.center.shiftPoint(-diff, Axis.XY), this.center.shiftPoint(diff, Axis.XY));
@@ -229,6 +240,9 @@ public class Ball implements GameObject, MovementListener {
         this.gameEnvironment.addCollidable(Utilities.translatePointsToBlocks(topLeft, bottomRight, size));
     }
 
+    /**
+     * Move one step.
+     */
     public void moveOneStep() {
         if (!this.paused) {
             Line trajectory = this.calcTrajectory();
@@ -314,6 +328,11 @@ public class Ball implements GameObject, MovementListener {
         return v;
     }
 
+    /**
+     * Debug draw.
+     *
+     * @param d the d
+     */
     private void debugDraw(DrawSurface d) {
         d.setColor(Color.red);
         this.calcTrajectory().drawOn(d);
@@ -344,6 +363,11 @@ public class Ball implements GameObject, MovementListener {
 
     }
 
+    /**
+     * Check perimeter hits velocity.
+     *
+     * @return the velocity
+     */
     private Velocity checkPerimeterHits() {
         //todo: add point more on line function.
         Rectangle ballRect = this.getRectPerimeter();
