@@ -218,6 +218,13 @@ public class Ball implements GameObject, MovementListener {
         this.gameBorders = Utilities.translatePointsToBorders(topLeft, bottomRight);
     }
 
+    /**
+     * Sets game borders.
+     *
+     * @param topLeft     the top left
+     * @param bottomRight the bottom right
+     * @param size        the size
+     */
     public void setGameBorders(Point topLeft, Point bottomRight, int size) {
         this.gameEnvironment.addCollidable(Utilities.translatePointsToBlocks(topLeft, bottomRight, size));
     }
