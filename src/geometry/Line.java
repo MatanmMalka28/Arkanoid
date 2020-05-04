@@ -5,7 +5,6 @@ import biuoop.DrawSurface;
 import utilities.Axis;
 import utilities.Utilities;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
@@ -20,7 +19,8 @@ public class Line {
     /**
      * The Start.
      */
-    private Point start, /**
+    private Point start,
+    /**
      * The End.
      */
     end;
@@ -149,11 +149,6 @@ public class Line {
         Point intersection;
         double x, y;
         if (this.isVertical && other.isVertical) {
-            /*if (Utilities.Utilities.compareDoubles(this.start.getX(), other.start.getX())) {
-                if (this.pointOnLine(other.start) || this.pointOnLine(other.end)) {
-                    return this.pointOnLine(other.start) ? other.start.copy() : other.end.copy();
-                }
-            }*/
             return null;
         } else if (this.isVertical) {
             x = this.start.getX();
@@ -164,7 +159,7 @@ public class Line {
             y = this.a * x + this.b;
             intersection = new Point(x, y);
         } else {
-            x = (this.b - other.b) / (other.b - this.b);
+            x = (this.b - other.b) / (other.a - this.a);
             y = this.a * x + this.b;
             intersection = new Point(x, y);
         }
@@ -238,10 +233,22 @@ public class Line {
                 || (this.start.equals(other.end) && this.end.equals(other.start));
     }
 
+    /**
+     * Shift line line.
+     *
+     * @param shiftSize the shift size
+     * @param axis      the axis
+     * @return the line
+     */
     public Line shiftLine(double shiftSize, Axis axis) {
         return new Line(this.start.shiftPoint(shiftSize, axis), this.end.shiftPoint(shiftSize, axis));
     }
 
+    /**
+     * Draw on.
+     *
+     * @param d the d
+     */
     public void drawOn(DrawSurface d) {
         d.drawLine(((int) this.start.getX()), ((int) this.start.getY()),
                 ((int) this.end.getX()), ((int) this.end.getY()));

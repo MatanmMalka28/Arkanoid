@@ -8,18 +8,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The type Game environment.
+ * Game Environment is a container that holds all the {@link Collidable} objects.
+ * On top of its uses as a container this object can check for collision and find the closest collision object.
  */
 public class GameEnvironment {
     /**
-     * The Collidables.
+     * The collidables container.
      */
     private List<Collidable> collidables;
 
     /**
-     * Instantiates a new Game environment.
+     * Instantiates a new Game environment with a given list of collidables.
      *
-     * @param collidables the collidables
+     * @param collidables this collidables are inserted to the GameEnvironment container
      */
     public GameEnvironment(List<Collidable> collidables) {
         this.collidables = new ArrayList<>(collidables);
@@ -33,27 +34,27 @@ public class GameEnvironment {
     }
 
     /**
-     * Instantiates a new Game environment.
+     * Instantiates a new Game environment from a given game environment.
      *
-     * @param gameEnvironment the game environment
+     * @param gameEnvironment the game environment to be copied
      */
     private GameEnvironment(GameEnvironment gameEnvironment) {
         this.collidables = new ArrayList<>(gameEnvironment.collidables);
     }
 
     /**
-     * Gets collidables.
+     * Gets a copy of the collidables container as a {@link List}.
      *
-     * @return the collidables
+     * @return a copy of the collidables container
      */
     public List<Collidable> getCollidables() {
         return new ArrayList<>(this.collidables);
     }
 
     /**
-     * Add collidable.
+     * Add a single collidable to the container.
      *
-     * @param c the c
+     * @param c the collidable to be added to the container
      */
 // add the given collidable to the environment.
     public void addCollidable(Collidable c) {
@@ -61,33 +62,32 @@ public class GameEnvironment {
     }
 
     /**
-     * Add collidable.
+     * Add a {@link List} of collidables to the container.
      *
-     * @param collidableList the collidables
+     * @param collidableList the collidables to be added to the container
      */
     public void addCollidable(List<Collidable> collidableList) {
         this.collidables.addAll(collidableList);
     }
 
     /**
-     * Remove collidable.
+     * Removes the first occurrence of the specified element from the container.
+     * if it is present (optional operation). If this container does not contain the element, it is unchanged.
      *
-     * @param c the c
+     * @param c the element to be removed from this list, if present
      */
     public void removeCollidable(Collidable c) {
         this.collidables.remove(c);
     }
 
     /**
-     * Gets closest collision.
+     * Assume an object moving from {@link Line#start()} to {@link Line#end()}.
+     * If this object will not collide with any of the collidables in this collection, return null.
+     * Else, return the information about the closest collision that is going to occur.
      *
-     * @param trajectory the trajectory
-     * @return the closest collision
+     * @param trajectory the movement vector of the object that checks for collisions
+     * @return the closest collision to the start of the trajectory.
      */
-// Assume an object moving from line.start() to line.end().
-    // If this object will not collide with any of the collidables
-    // in this collection, return null. Else, return the information
-    // about the closest collision that is going to occur.
     public CollisionInfo getClosestCollision(Line trajectory) {
         List<CollisionInfo> collisionInfoList = new ArrayList<>();
         for (Collidable collidable : this.collidables) {
@@ -114,7 +114,7 @@ public class GameEnvironment {
     /**
      * Copy game environment.
      *
-     * @return the game environment
+     * @return a copy of this game environment
      */
     public GameEnvironment copy() {
         return new GameEnvironment(this);

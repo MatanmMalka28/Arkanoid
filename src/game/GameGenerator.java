@@ -1,13 +1,13 @@
 package game;
 
 import game.objects.Ball;
-import game.objects.blocks.Block;
 import game.objects.attributes.Velocity;
+import game.objects.blocks.Block;
 import geometry.GeometryGenerator;
 import geometry.Point;
 import utilities.Direction;
 
-import java.awt.*;
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,27 +42,32 @@ public class GameGenerator {
     /**
      * The Speed lower.
      */
-    private double speedLower, /**
+    private double speedLower,
+    /**
      * The Speed upper.
      */
-    speedUpper, /**
+    speedUpper,
+    /**
      * The Deg lower.
      */
-    degLower, /**
+    degLower,
+    /**
      * The Deg upper.
      */
     degUpper;
     /**
      * The Radius lower.
      */
-    private int radiusLower, /**
+    private int radiusLower,
+    /**
      * The Radius upper.
      */
     radiusUpper;
     /**
      * The Top left.
      */
-    private Point topLeft, /**
+    private Point topLeft,
+    /**
      * The Bottom right.
      */
     bottomRight;
@@ -129,7 +134,7 @@ public class GameGenerator {
     /**
      * Gets a number which is a valid angle.
      *
-     * @return angle
+     * @return angle angle
      */
     private double getAngle() {
         return this.generator.getNumber(this.degLower, this.degUpper);
@@ -151,36 +156,6 @@ public class GameGenerator {
      */
     private int getRadius() {
         return ((int) this.generator.getNumber(this.radiusLower, this.radiusUpper));
-    }
-
-    /**
-     * Gets a newly random generated ball with a certain given size, and velocity.
-     *
-     * @param size the size
-     * @param v    the v
-     * @return the ball
-     */
-    public Ball getBall(int size, Velocity v) {
-        Point center = this.generator.getPoint();
-        while (!this.ballCenterInFrame(center, size)) {
-            center = this.generator.getPoint();
-        }
-        Ball ball = new Ball(center, size, this.getColor());
-        ball.setVelocity(v);
-        ball.setGameBorders(this.topLeft, this.bottomRight, 20);
-        return ball;
-    }
-
-    /**
-     * checks if the entire area of the ball falls inside the borders.
-     *
-     * @param center the center
-     * @param size   the size
-     * @return the boolean
-     */
-    private boolean ballCenterInFrame(Point center, int size) {
-        return center.getX() + size < this.bottomRight.getX() && center.getX() - size > topLeft.getX()
-                && center.getY() + size < this.bottomRight.getY() && center.getY() - size > topLeft.getY();
     }
 
     /**
@@ -242,6 +217,24 @@ public class GameGenerator {
     }
 
     /**
+     * Gets a newly random generated ball with a certain given size, and velocity.
+     *
+     * @param size the size
+     * @param v    the v
+     * @return the ball
+     */
+    public Ball getBall(int size, Velocity v) {
+        Point center = this.generator.getPoint();
+        while (!this.ballCenterInFrame(center, size)) {
+            center = this.generator.getPoint();
+        }
+        Ball ball = new Ball(center, size, this.getColor());
+        ball.setVelocity(v);
+        ball.setGameBorders(this.topLeft, this.bottomRight, 20);
+        return ball;
+    }
+
+    /**
      * Gets a newly random generated ball with a certain given size, movement angle and movement speed.
      *
      * @param size  the size
@@ -297,7 +290,31 @@ public class GameGenerator {
         this.generator = new GeometryGenerator(this.topLeft, this.bottomRight);
     }
 
-    public static List<Block> makeBlockLine(int numOfBlocks, Point startPoint, int width, int height, Color color, Direction buildDirection) {
+    /**
+     * checks if the entire area of the ball falls inside the borders.
+     *
+     * @param center the center
+     * @param size   the size
+     * @return the boolean
+     */
+    private boolean ballCenterInFrame(Point center, int size) {
+        return center.getX() + size < this.bottomRight.getX() && center.getX() - size > topLeft.getX()
+                && center.getY() + size < this.bottomRight.getY() && center.getY() - size > topLeft.getY();
+    }
+
+    /**
+     * Make block line list.
+     *
+     * @param numOfBlocks    the num of blocks
+     * @param startPoint     the start point
+     * @param width          the width
+     * @param height         the height
+     * @param color          the color
+     * @param buildDirection the build direction
+     * @return the list
+     */
+    public static List<Block> makeBlockLine(int numOfBlocks, Point startPoint, int width, int height,
+                                            Color color, Direction buildDirection) {
         int sign;
         switch (buildDirection) {
             case LEFT:

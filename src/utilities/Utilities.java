@@ -6,7 +6,7 @@ import game.objects.Collidable;
 import geometry.Line;
 import geometry.Point;
 
-import java.awt.*;
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -14,7 +14,7 @@ import java.util.Random;
 import java.util.TreeMap;
 
 /**
- * The type Utilities.
+ * A Utilities class for useful function.
  */
 public class Utilities {
     /**
@@ -57,6 +57,7 @@ public class Utilities {
      *
      * @param topLeft     the top left
      * @param bottomRight the bottom right
+     * @param size        the size
      * @return the list
      */
     public static List<Collidable> translatePointsToBlocks(Point topLeft, Point bottomRight, int size) {
@@ -103,6 +104,11 @@ public class Utilities {
         return angle;
     }
 
+    /**
+     * Gets a random sign.
+     *
+     * @return the sign
+     */
     public static int getSign() {
         return rand.nextBoolean() ? 1 : -1;
     }

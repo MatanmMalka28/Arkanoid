@@ -13,7 +13,8 @@ public class GeometryGenerator {
     /**
      * The Top left.
      */
-    private Point topLeft, /**
+    private Point topLeft,
+    /**
      * The Bottom right.
      */
     bottomRight;

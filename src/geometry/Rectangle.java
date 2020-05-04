@@ -1,12 +1,11 @@
 package geometry;
 
 import biuoop.DrawSurface;
-import org.omg.CORBA.MARSHAL;
 import utilities.Diagonal;
 import utilities.Direction;
 import utilities.Utilities;
 
-import java.awt.*;
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -21,11 +20,15 @@ public class Rectangle {
     /**
      * The Top left.
      */
-    private Point topLeft, /**
+    private Point topLeft,
+    /**
      * The Bottom right.
      */
     bottomRight;
 
+    /**
+     * The Edges map.
+     */
     private Map<Direction, Line> edgesMap;
 
     /**
@@ -65,23 +68,29 @@ public class Rectangle {
     }
 
     /**
-     * Gets top left.
+     * Gets a point which is the bottom right corner of this rectangle.
      *
-     * @return the top left
+     * @return the bottom right corner of this rectangle
      */
     public Point getTopLeft() {
         return this.topLeft.copy();
     }
 
     /**
-     * Gets bottom right.
+     * Gets a point which is the bottom right corner of this rectangle.
      *
-     * @return the bottom right
+     * @return the bottom right corner of this rectangle
      */
     public Point getBottomRight() {
         return this.bottomRight.copy();
     }
 
+    /**
+     * Gets diagonal.
+     *
+     * @param diagonal the diagonal
+     * @return the diagonal
+     */
     public Line getDiagonal(Diagonal diagonal) {
         switch (diagonal) {
             default:
@@ -94,6 +103,13 @@ public class Rectangle {
         }
     }
 
+    /**
+     * Draw edges.
+     *
+     * @param rect  the rect
+     * @param d     the d
+     * @param color the color
+     */
     public static void drawEdges(Rectangle rect, DrawSurface d, Color color) {
         d.setColor(color);
         d.drawRectangle(((int) rect.getTopLeft().getX()), ((int) rect.getTopLeft().getY()),
@@ -213,6 +229,13 @@ public class Rectangle {
         return Math.abs(topLeft.getY() - bottomRight.getY());
     }
 
+    /**
+     * Fill rect.
+     *
+     * @param rect  the rect
+     * @param d     the d
+     * @param color the color
+     */
     public static void fillRect(Rectangle rect, DrawSurface d, Color color) {
         d.setColor(color);
         d.fillRectangle(((int) rect.getTopLeft().getX()), ((int) rect.getTopLeft().getY()),

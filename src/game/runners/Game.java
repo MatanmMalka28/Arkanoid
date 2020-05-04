@@ -4,26 +4,26 @@ import biuoop.DrawSurface;
 import biuoop.GUI;
 import biuoop.Sleeper;
 import game.GameGenerator;
-import game.objects.attributes.Status;
 import game.listeners.BallRemover;
 import game.listeners.BlockRemover;
 import game.listeners.HitListener;
 import game.listeners.MovementListener;
 import game.listeners.ScoreTrackingListener;
 import game.managers.Counter;
-import game.objects.sprites.Background;
 import game.objects.Ball;
+import game.objects.Collidable;
+import game.objects.Paddle;
+import game.objects.attributes.Status;
+import game.objects.attributes.Velocity;
 import game.objects.blocks.Block;
 import game.objects.blocks.BorderBlock;
-import game.objects.Collidable;
 import game.objects.blocks.KillingBlock;
-import game.objects.Paddle;
-import game.objects.indicators.ScoreIndicator;
-import game.objects.sprites.Sprite;
-import game.objects.indicators.TurnsLeftIndicator;
-import game.objects.attributes.Velocity;
 import game.objects.collections.GameEnvironment;
 import game.objects.collections.SpriteCollection;
+import game.objects.indicators.ScoreIndicator;
+import game.objects.indicators.TurnsLeftIndicator;
+import game.objects.sprites.Background;
+import game.objects.sprites.Sprite;
 import geometry.Line;
 import geometry.Point;
 import utilities.Axis;
@@ -34,39 +34,130 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The type Game.
+ */
 public class Game {
+    /**
+     * The constant BALL_SPEED.
+     */
     private static final int BALL_SPEED = 10;
+    /**
+     * The constant BALL_ANGLE.
+     */
     private static final int BALL_ANGLE = 0;
+    /**
+     * The constant DEFAULT_TOP_LEFT.
+     */
     private static final Point DEFAULT_TOP_LEFT = new Point(0, 0);
+    /**
+     * The constant DEFAULT_BOTTOM_RIGHT.
+     */
     private static final Point DEFAULT_BOTTOM_RIGHT = new Point(800, 600);
+    /**
+     * The constant PADDLE_WIDTH.
+     */
     private static final int PADDLE_WIDTH = 100;
+    /**
+     * The constant PADDLE_HEIGHT.
+     */
     private static final int PADDLE_HEIGHT = 20;
+    /**
+     * The constant BLOCK_WIDTH.
+     */
     private static final int BLOCK_WIDTH = 30;
+    /**
+     * The constant BLOCK_HEIGHT.
+     */
     private static final int BLOCK_HEIGHT = 20;
+    /**
+     * The constant BORDER_WIDTH.
+     */
     private static final int BORDER_WIDTH = 20;
+    /**
+     * The constant DEFAULT_LIVES.
+     */
     private static final int DEFAULT_LIVES = 3;
+    /**
+     * The constant SCORE_HEIGHT.
+     */
     private static final int SCORE_HEIGHT = 30;
+    /**
+     * The constant SCORE_WIDTH.
+     */
     private static final int SCORE_WIDTH = ((int) DEFAULT_BOTTOM_RIGHT.getX() / 2);
+    /**
+     * The constant NUM_OF_BALLS.
+     */
     private static final int NUM_OF_BALLS = 1;
+    /**
+     * The constant NUM_OF_BALL_LIVES.
+     */
     private static final int NUM_OF_BALL_LIVES = 1;
-    private static final Color[] COLORS = {Color.ORANGE, Color.RED, Color.CYAN, Color.BLUE, Color.GREEN, Color.PINK, Color.MAGENTA};
+    /**
+     * The constant COLORS.
+     */
+    private static final Color[] COLORS = {Color.ORANGE, Color.RED, Color.CYAN, Color.BLUE, Color.GREEN,
+            Color.PINK, Color.MAGENTA};
 
+    /**
+     * The Sprites.
+     */
     private SpriteCollection sprites;
+    /**
+     * The Environment.
+     */
     private GameEnvironment environment;
-    private Point topLeft, bottomRight;
+    /**
+     * The Top left.
+     */
+    private Point topLeft, /**
+     * The Bottom right.
+     */
+    bottomRight;
+    /**
+     * The Background.
+     */
     private Background background;
+    /**
+     * The Gui.
+     */
     private GUI gui;
+    /**
+     * The Stopped.
+     */
     private boolean stopped;
+    /**
+     * The Game status.
+     */
     private Status gameStatus = Status.PLAYING;
+    /**
+     * The Score counter.
+     */
     private Counter scoreCounter;
+    /**
+     * The Turns counter.
+     */
     private Counter turnsCounter;
+    /**
+     * The Balls counter.
+     */
     private Counter ballsCounter;
 
 
+    /**
+     * Instantiates a new Game.
+     */
     public Game() {
         this(DEFAULT_TOP_LEFT, DEFAULT_BOTTOM_RIGHT);
     }
 
+    /**
+     * Instantiates a new Game.
+     *
+     * @param topLeft     the top left
+     * @param bottomRight the bottom right
+     */
     public Game(Point topLeft, Point bottomRight) {
         this.topLeft = topLeft;
         this.bottomRight = bottomRight;
@@ -80,22 +171,47 @@ public class Game {
 
     }
 
+    /**
+     * Gets top left.
+     *
+     * @return the top left
+     */
     public Point getTopLeft() {
         return topLeft.copy();
     }
 
+    /**
+     * Gets bottom right.
+     *
+     * @return the bottom right
+     */
     public Point getBottomRight() {
         return bottomRight.copy();
     }
 
+    /**
+     * Gets environment.
+     *
+     * @return the environment
+     */
     public GameEnvironment getEnvironment() {
         return new GameEnvironment(this.environment.getCollidables());
     }
 
+    /**
+     * Is stopped boolean.
+     *
+     * @return the boolean
+     */
     public boolean isStopped() {
         return this.stopped;
     }
 
+    /**
+     * Gets paddle.
+     *
+     * @return the paddle
+     */
     private Paddle getPaddle() {
         for (Collidable c : this.environment.getCollidables()) {
             if (c instanceof Paddle) {
@@ -105,6 +221,11 @@ public class Game {
         return null;
     }
 
+    /**
+     * Sets game status.
+     *
+     * @param status the status
+     */
     private void setGameStatus(Status status) {
         this.gameStatus = status;
         switch (this.gameStatus) {
@@ -116,30 +237,60 @@ public class Game {
             case LOST_ROUND:
                 this.stopped = true;
                 break;
+            default:
+                break;
         }
     }
 
+    /**
+     * Add collidable.
+     *
+     * @param collidableList the collidable list
+     */
     public void addCollidable(List<Collidable> collidableList) {
         environment.addCollidable(collidableList);
     }
 
-    public void addSprite(List<Sprite> sprites) {
-        this.sprites.addSprite(sprites);
+    /**
+     * Add sprite.
+     *
+     * @param spriteList the sprites
+     */
+    public void addSprite(List<Sprite> spriteList) {
+        this.sprites.addSprite(spriteList);
     }
 
+    /**
+     * Add collidable.
+     *
+     * @param c the c
+     */
     public void addCollidable(Collidable c) {
         environment.addCollidable(c);
     }
 
+    /**
+     * Remove sprite.
+     *
+     * @param s the s
+     */
     public void removeSprite(Sprite s) {
         this.sprites.removeSprite(s);
     }
 
+    /**
+     * Remove collidable.
+     *
+     * @param c the c
+     */
     public void removeCollidable(Collidable c) {
         this.environment.removeCollidable(c);
     }
 
-    // Initialize a new game: create the Blocks and Ball (and Paddle)
+    /**
+     * Initialize.
+     */
+// Initialize a new game: create the Blocks and Ball (and Paddle)
     // and add them to the game.
     public void initialize() {
         Block.setDrawHits(false);
@@ -155,16 +306,27 @@ public class Game {
         ScoreIndicator scoreIndicator = new ScoreIndicator(this.topLeft, SCORE_WIDTH, SCORE_HEIGHT, this.scoreCounter);
         scoreIndicator.addToGame(this);
         Line top = Utilities.translatePointsToBorders(this.topLeft, this.bottomRight).get(Direction.TOP);
-        TurnsLeftIndicator turnsLeftIndicator = new TurnsLeftIndicator(top.middle(), SCORE_WIDTH, SCORE_HEIGHT, this.turnsCounter);
+        TurnsLeftIndicator turnsLeftIndicator = new TurnsLeftIndicator(top.middle(), SCORE_WIDTH,
+                SCORE_HEIGHT, this.turnsCounter);
         turnsLeftIndicator.addToGame(this);
     }
 
+    /**
+     * Generate balls.
+     *
+     * @param radius the radius
+     */
     public void generateBalls(int radius) {
         for (int i = 0; i < NUM_OF_BALLS; i++) {
             this.addNewBall(radius);
         }
     }
 
+    /**
+     * Add new ball.
+     *
+     * @param radius the radius
+     */
     public void addNewBall(int radius) {
         this.ballsCounter.decrease();
         if (this.hasBallsInGame()) {
@@ -175,7 +337,10 @@ public class Game {
         }
     }
 
-    // Run the game -- start the animation loop.
+    /**
+     * Run.
+     */
+// Run the game -- start the animation loop.
     public void run() {
         boolean running = true;
         while (running) {
@@ -196,21 +361,38 @@ public class Game {
                     this.initialize();
                     this.playOneTurn();
                     break;
+                default:
+                    break;
             }
         }
         this.gui.close();
     }
 
+    /**
+     * Add sprite.
+     *
+     * @param s the s
+     */
     public void addSprite(Sprite s) {
         sprites.addSprite(s);
     }
 
+    /**
+     * Assign game environment.
+     *
+     * @param ball the ball
+     */
     public void assignGameEnvironment(Ball ball) {
         if (ball != null && this.sprites.getSpriteList().contains(ball)) {
             ball.setGameEnvironment(this.environment);
         }
     }
 
+    /**
+     * Assign movement listener.
+     *
+     * @param ml the ml
+     */
     public void assignMovementListener(MovementListener ml) {
         Paddle paddle = this.getPaddle();
         if (paddle != null) {
@@ -218,6 +400,11 @@ public class Game {
         }
     }
 
+    /**
+     * Remove movement listener.
+     *
+     * @param ml the ml
+     */
     public void removeMovementListener(MovementListener ml) {
         Paddle paddle = this.getPaddle();
         if (paddle != null) {
@@ -225,12 +412,20 @@ public class Game {
         }
     }
 
+    /**
+     * Generate paddle paddle.
+     *
+     * @return the paddle
+     */
     private Paddle generatePaddle() {
         return new Paddle(new Point(this.background.width() / 2 - PADDLE_WIDTH,
                 this.background.height() - 2 * PADDLE_HEIGHT), PADDLE_WIDTH, PADDLE_HEIGHT,
                 Color.green, this.gui.getKeyboardSensor());
     }
 
+    /**
+     * Soft initialize.
+     */
     private void softInitialize() {
         this.setGameStatus(Status.PLAYING);
         this.generatePaddle().addToGame(this);
@@ -239,6 +434,9 @@ public class Game {
 
     }
 
+    /**
+     * Play one turn.
+     */
     private void playOneTurn() {
         int framesPerSecond = 60;
         int millisecondsPerFrame = 1000 / framesPerSecond;
@@ -265,6 +463,12 @@ public class Game {
         this.turnsCounter.decrease();
     }
 
+    /**
+     * Add blocks.
+     *
+     * @param blocks       the blocks
+     * @param hitListeners the hit listeners
+     */
     private void addBlocks(List<Block> blocks, List<HitListener> hitListeners) {
         for (Block block : blocks) {
             block.addToGame(this);
@@ -276,18 +480,30 @@ public class Game {
         }
     }
 
+    /**
+     * Make borders list.
+     *
+     * @return the list
+     */
     private List<Block> makeBorders() {
-        Point topLeft = this.topLeft.shiftPoint(30, Axis.Y);
-        Point topRight = new Point(bottomRight.getX(), topLeft.getY());
-        Point bottomLeft = new Point(topLeft.getX(), bottomRight.getY());
+        Point bordersTopLeft = this.topLeft.shiftPoint(30, Axis.Y);
+        Point topRight = new Point(bottomRight.getX(), bordersTopLeft.getY());
+        Point bottomLeft = new Point(bordersTopLeft.getX(), bottomRight.getY());
         List<Block> blockList = new ArrayList<>();
         blockList.add(new BorderBlock(this.topLeft, bottomLeft.shiftPoint(BORDER_WIDTH, Axis.X))); //left
         blockList.add(new BorderBlock(this.topLeft, topRight.shiftPoint(BORDER_WIDTH, Axis.Y))); //up
         blockList.add(new BorderBlock(topRight.shiftPoint(-BORDER_WIDTH, Axis.X), this.bottomRight)); //right
-        blockList.add(new KillingBlock(bottomLeft.shiftPoint(-BORDER_WIDTH, Axis.Y), this.bottomRight, new BallRemover(this))); //down
+        blockList.add(new KillingBlock(bottomLeft.shiftPoint(-BORDER_WIDTH, Axis.Y), this.bottomRight,
+                new BallRemover(this))); //down
         return blockList;
     }
 
+    /**
+     * Create ball ball.
+     *
+     * @param radius the radius
+     * @return the ball
+     */
     private Ball createBall(int radius) {
         Paddle paddle = this.getPaddle();
         if (paddle != null) {
@@ -297,6 +513,9 @@ public class Game {
         }
     }
 
+    /**
+     * Update status.
+     */
     private void updateStatus() {
         if (!this.hasLives()) {
             this.setGameStatus(Status.LOSE);
@@ -309,18 +528,40 @@ public class Game {
         }
     }
 
+    /**
+     * Has blocks boolean.
+     *
+     * @return the boolean
+     */
     private boolean hasBlocks() {
         return this.environment.getCollidables().size() > 5; //5 = 4 borders + 1 paddle
     }
 
+    /**
+     * Has lives boolean.
+     *
+     * @return the boolean
+     */
     private boolean hasLives() {
         return this.turnsCounter.getValue() > 0;
     }
 
+    /**
+     * Has balls in game boolean.
+     *
+     * @return the boolean
+     */
     private boolean hasBallsInGame() {
         return !(this.ballsCounter.getValue() < 0);
     }
 
+    /**
+     * Create ball ball.
+     *
+     * @param paddle the paddle
+     * @param radius the radius
+     * @return the ball
+     */
     private Ball createBall(Paddle paddle, int radius) {
         Point ballCenter = paddle.getCollisionRectangle().getEdge(Direction.TOP).middle();
         ballCenter = ballCenter.shiftPoint(-radius, Axis.Y);
@@ -329,22 +570,38 @@ public class Game {
         return ball;
     }
 
-    private List<Block> makeBlocks(int blocksOnFirstLine, double widthFill, int numOfLines, double startY, int blockDiff) {
-        Block.setHitCount(3);
-        int blockWidth = ((int) (((this.background.width() - 2 * BORDER_WIDTH) * widthFill) / blocksOnFirstLine));
+    /**
+     * Make blocks list.
+     *
+     * @param firstLineBlocks the blocks on first line
+     * @param widthFill       the width fill
+     * @param lines           the num of lines
+     * @param startY          the start y
+     * @param blockDiff       the block diff
+     * @return the list
+     */
+    private List<Block> makeBlocks(int firstLineBlocks, double widthFill, int lines, double startY, int blockDiff) {
+        Block.setInitialHitCount(3);
+        int blockWidth = ((int) (((this.background.width() - 2 * BORDER_WIDTH) * widthFill) / firstLineBlocks));
         double startX = this.background.width() - BORDER_WIDTH;
         List<Block> blockList = new ArrayList<>();
-        for (int i = 0; i < numOfLines; i++) {
-            blockList.addAll(GameGenerator.makeBlockLine(blocksOnFirstLine, new Point(startX, startY), blockWidth,
+        for (int i = 0; i < lines; i++) {
+            blockList.addAll(GameGenerator.makeBlockLine(firstLineBlocks, new Point(startX, startY), blockWidth,
                     BLOCK_HEIGHT, COLORS[i % COLORS.length], Direction.LEFT));
             startY += BLOCK_HEIGHT;
-            blocksOnFirstLine -= blockDiff;
+            firstLineBlocks -= blockDiff;
         }
         return blockList;
     }
 
+    /**
+     * The entry point of application.
+     *
+     * @param args the input arguments
+     */
     public static void main(String[] args) {
         Game game = new Game();
+        Ball.setDebugMode(true);
         game.run();
     }
 }

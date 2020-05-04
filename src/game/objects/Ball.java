@@ -13,8 +13,6 @@ import utilities.Utilities;
 import utilities.Direction;
 import biuoop.DrawSurface;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.awt.Color;
 import java.util.Map;
 import java.util.Set;
@@ -241,7 +239,9 @@ public class Ball implements GameObject, MovementListener {
     }
 
     /**
-     * Move one step.
+     * Checks if the ball can apply its velocity on the balls center to move one step ahead without collision.
+     * If no collision occur then move the ball by that step, otherwise check the collision parameters and change the
+     * ball's direction based on the hit point.
      */
     public void moveOneStep() {
         if (!this.paused) {
@@ -261,71 +261,6 @@ public class Ball implements GameObject, MovementListener {
                 this.center = this.velocity.applyToPoint(this.center);
             }
         }
-    }
-
-    /**
-     * Gets collision point.
-     *
-     * @param trajectory the trajectory
-     * @return the collision point
-     */
-    private Point getCollisionPoint(Line trajectory) {
-        List<Point> hitPoints = new ArrayList<>();
-        for (Line border : this.gameBorders.values()) {
-            if (trajectory.isIntersecting(border)) {
-                hitPoints.add(trajectory.intersectionWith(border));
-            }
-        }
-        if (hitPoints.isEmpty()) {
-            return null;
-        } else {
-            Point closestHit = hitPoints.get(0);
-            hitPoints.remove(0);
-            for (Point hit : hitPoints) {
-                if (hit.distance(this.center) < closestHit.distance(this.center)) {
-                    closestHit = hit;
-                }
-            }
-            return closestHit;
-        }
-    }
-
-    /**
-     * Change velocity upon hit velocity.
-     *
-     * @param hit the hit
-     * @return the velocity
-     */
-    private Velocity changeVelocityUponHit(Point hit) {
-        Direction direction = Direction.NONE;
-        for (Direction key : this.gameBorders.keySet()) {
-            if (this.gameBorders.get(key).pointOnLine(hit)) {
-                if (direction != Direction.NONE) {
-                    direction = Direction.BOTH;
-                    break;
-                }
-                direction = key;
-            }
-        }
-        Velocity v;
-        switch (direction) {
-            case TOP:
-            case BOTTOM:
-                v = this.velocity.changeSign(1, -1);
-                break;
-            case LEFT:
-            case RIGHT:
-                v = this.velocity.changeSign(-1, 1);
-                break;
-            case BOTH:
-                v = this.velocity.changeSign(-1, -1);
-                break;
-            case NONE:
-            default:
-                v = this.velocity.copy();
-                break;
-        }
-        return v;
     }
 
     /**
@@ -364,7 +299,7 @@ public class Ball implements GameObject, MovementListener {
     }
 
     /**
-     * Check perimeter hits velocity.
+     * Check perimeter hits of the ball.
      *
      * @return the velocity
      */
@@ -411,12 +346,7 @@ public class Ball implements GameObject, MovementListener {
         return v;
     }
 
-    /**
-     * Draw on.
-     *
-     * @param d the d
-     */
-// draw the ball on the given DrawSurface
+
     public void drawOn(DrawSurface d) {
         d.setColor(this.color);
         d.fillCircle(this.getX(), this.getY(), this.radius);

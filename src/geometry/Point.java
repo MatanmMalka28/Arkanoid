@@ -13,7 +13,8 @@ public class Point {
     /**
      * The X.
      */
-    private double x, /**
+    private double x,
+    /**
      * The Y.
      */
     y;
@@ -113,6 +114,16 @@ public class Point {
         return shiftedPoint;
     }
 
+    /**
+     * Equals boolean.
+     *
+     * @param other the other
+     * @return the boolean
+     */
+    public boolean equals(Point other) {
+        return Utilities.compareDoubles(this.x, other.x) && Utilities.compareDoubles(this.y, other.y);
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(x, y);
@@ -130,21 +141,8 @@ public class Point {
         return this.equals(point);
     }
 
-    /**
-     * Equals boolean.
-     *
-     * @param other the other
-     * @return the boolean
-     */
-    public boolean equals(Point other) {
-        return Utilities.compareDoubles(this.x, other.x) && Utilities.compareDoubles(this.y, other.y);
-    }
-
     @Override
     public String toString() {
-        return "Point{" +
-                "x=" + x +
-                ", y=" + y +
-                '}';
+        return "Point{" + "x=" + x + ", y=" + y + '}';
     }
 }

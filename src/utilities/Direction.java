@@ -30,6 +30,12 @@ public enum Direction {
     BOTH;
 
 
+    /**
+     * Direction parallel boolean.
+     *
+     * @param other the other
+     * @return return true if and only if both this and other are parallel directions.
+     */
     public boolean directionParallel(Direction other) {
         if (this == other) {
             return true;
