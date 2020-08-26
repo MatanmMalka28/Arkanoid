@@ -2,8 +2,11 @@ package game.runners;
 
 import biuoop.DrawSurface;
 import biuoop.GUI;
-import biuoop.Sleeper;
+import biuoop.KeyboardSensor;
 import game.GameGenerator;
+import game.animations.Animatable;
+import game.animations.AnimationRunner;
+import game.animations.screens.PauseScreen;
 import game.listeners.BallRemover;
 import game.listeners.BlockRemover;
 import game.listeners.HitListener;
@@ -30,6 +33,7 @@ import utilities.Axis;
 import utilities.Direction;
 import utilities.Utilities;
 
+
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +41,7 @@ import java.util.List;
 /**
  * The type Game.
  */
-public class Game {
+public class Game implements Animatable {
     /**
      * The constant BALL_SPEED.
      */
@@ -99,30 +103,36 @@ public class Game {
      */
     private static final Color[] COLORS = {Color.ORANGE, Color.RED, Color.CYAN, Color.BLUE, Color.GREEN,
             Color.PINK, Color.MAGENTA};
+    /**
+     * The constant FRAMES_PER_SECOND.
+     */
+    private static final int FRAMES_PER_SECOND = 60;
 
     /**
      * The Sprites.
      */
-    private SpriteCollection sprites;
+    private final SpriteCollection sprites;
     /**
      * The Environment.
      */
-    private GameEnvironment environment;
+    private final GameEnvironment environment;
     /**
      * The Top left.
      */
-    private Point topLeft, /**
+    private final Point topLeft;
+    /**
      * The Bottom right.
      */
-    bottomRight;
+    private final Point bottomRight;
     /**
      * The Background.
      */
-    private Background background;
+    private final Background background;
+
     /**
-     * The Gui.
+     * The Animation runner.
      */
-    private GUI gui;
+    private final AnimationRunner runner;
     /**
      * The Stopped.
      */
@@ -134,11 +144,11 @@ public class Game {
     /**
      * The Score counter.
      */
-    private Counter scoreCounter;
+    private final Counter scoreCounter;
     /**
      * The Turns counter.
      */
-    private Counter turnsCounter;
+    private final Counter turnsCounter;
     /**
      * The Balls counter.
      */
@@ -164,7 +174,8 @@ public class Game {
         this.sprites = new SpriteCollection();
         this.environment = new GameEnvironment();
         this.background = new Background(topLeft, bottomRight, Color.BLUE.darker().darker());
-        this.gui = new GUI("Game", this.background.width(), this.background.height());
+        this.runner = new AnimationRunner(new GUI("Game", this.background.width(),
+                this.background.height()), FRAMES_PER_SECOND);
         this.scoreCounter = new Counter();
         this.turnsCounter = new Counter(DEFAULT_LIVES);
         this.ballsCounter = new Counter(NUM_OF_BALLS * NUM_OF_BALL_LIVES);
@@ -365,7 +376,7 @@ public class Game {
                     break;
             }
         }
-        this.gui.close();
+        this.runner.closeGuiWindow();
     }
 
     /**
@@ -420,7 +431,7 @@ public class Game {
     private Paddle generatePaddle() {
         return new Paddle(new Point(this.background.width() / 2 - PADDLE_WIDTH,
                 this.background.height() - 2 * PADDLE_HEIGHT), PADDLE_WIDTH, PADDLE_HEIGHT,
-                Color.green, this.gui.getKeyboardSensor());
+                Color.green, this.runner.getKeyboardSensor());
     }
 
     /**
@@ -438,24 +449,7 @@ public class Game {
      * Play one turn.
      */
     private void playOneTurn() {
-        int framesPerSecond = 60;
-        int millisecondsPerFrame = 1000 / framesPerSecond;
-        Sleeper sleeper = new Sleeper();
-        while (!this.stopped) {
-            long startTime = System.currentTimeMillis(); // timing
-
-            DrawSurface d = this.gui.getDrawSurface();
-            this.sprites.drawAllOn(d);
-            gui.show(d);
-            this.sprites.notifyAllTimePassed();
-            this.updateStatus();
-            // timing
-            long usedTime = System.currentTimeMillis() - startTime;
-            long milliSecondLeftToSleep = millisecondsPerFrame - usedTime;
-            if (milliSecondLeftToSleep > 0) {
-                sleeper.sleepFor(milliSecondLeftToSleep);
-            }
-        }
+        this.runner.run(this);
         Paddle paddle = this.getPaddle();
         if (paddle != null) {
             paddle.removeFromGame(this);
@@ -594,12 +588,30 @@ public class Game {
         return blockList;
     }
 
+    @Override
+    public void doOneFrame(DrawSurface d) {
+        this.sprites.drawAllOn(d);
+        this.sprites.notifyAllTimePassed();
+        KeyboardSensor keyboard = this.runner.getKeyboardSensor();
+        if (keyboard.isPressed("p") || keyboard.isPressed("P") || keyboard.isPressed("פ")){
+            this.runner.run(new PauseScreen(keyboard));
+        }
+        this.updateStatus();
+
+    }
+
+    @Override
+    public boolean shouldStop() {
+        return this.stopped;
+    }
+
     /**
      * The entry point of application.
      *
      * @param args the input arguments
      */
     public static void main(String[] args) {
+        //todo: add args parser
         Game game = new Game();
         game.run();
     }
