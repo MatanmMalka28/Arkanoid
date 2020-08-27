@@ -6,6 +6,7 @@ import biuoop.KeyboardSensor;
 import game.GameGenerator;
 import game.animations.Animatable;
 import game.animations.AnimationRunner;
+import game.animations.CountdownAnimation;
 import game.animations.screens.PauseScreen;
 import game.listeners.BallRemover;
 import game.listeners.BlockRemover;
@@ -449,6 +450,7 @@ public class Game implements Animatable {
      * Play one turn.
      */
     private void playOneTurn() {
+        this.runner.run(new CountdownAnimation(3,3,this.getSprites(),this.topLeft.middle(this.bottomRight)));
         this.runner.run(this);
         Paddle paddle = this.getPaddle();
         if (paddle != null) {
@@ -595,9 +597,22 @@ public class Game implements Animatable {
         KeyboardSensor keyboard = this.runner.getKeyboardSensor();
         if (keyboard.isPressed("p") || keyboard.isPressed("P") || keyboard.isPressed("פ")){
             this.runner.run(new PauseScreen(keyboard));
+            this.runner.run(new CountdownAnimation(3,3,this.getSprites(),this.topLeft.middle(this.bottomRight)));
         }
         this.updateStatus();
 
+    }
+
+    private SpriteCollection getSprites() {
+        return new SpriteCollection(this.sprites.getSpriteList());
+    }
+
+    public static Point getDefaultTopLeft() {
+        return DEFAULT_TOP_LEFT;
+    }
+
+    public static Point getDefaultBottomRight() {
+        return DEFAULT_BOTTOM_RIGHT;
     }
 
     @Override
