@@ -4,7 +4,7 @@ import game.listeners.MovementListener;
 import game.objects.collections.GameEnvironment;
 import game.objects.attributes.Velocity;
 import game.objects.dataStructers.CollisionInfo;
-import game.runners.Game;
+import game.runners.GameLevel;
 import geometry.Line;
 import geometry.Point;
 import geometry.Rectangle;
@@ -364,16 +364,16 @@ public class Ball implements GameObject, MovementListener {
     }
 
     @Override
-    public void removeFromGame(Game game) {
-        game.removeSprite(this);
-        game.removeMovementListener(this);
+    public void removeFromGame(GameLevel gameLevel) {
+        gameLevel.removeSprite(this);
+        gameLevel.removeMovementListener(this);
     }
 
     @Override
-    public void addToGame(Game game) {
-        game.addSprite(this);
-        game.assignGameEnvironment(this);
-        game.assignMovementListener(this);
+    public void addToGame(GameLevel gameLevel) {
+        gameLevel.addSprite(this);
+        gameLevel.assignGameEnvironment(this);
+        gameLevel.assignMovementListener(this);
     }
 
     @Override

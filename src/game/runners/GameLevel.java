@@ -42,7 +42,7 @@ import java.util.List;
 /**
  * The type Game.
  */
-public class Game implements Animatable {
+public class GameLevel implements Animatable {
     /**
      * The constant BALL_SPEED.
      */
@@ -159,7 +159,7 @@ public class Game implements Animatable {
     /**
      * Instantiates a new Game.
      */
-    public Game() {
+    public GameLevel() {
         this(DEFAULT_TOP_LEFT, DEFAULT_BOTTOM_RIGHT);
     }
 
@@ -169,7 +169,7 @@ public class Game implements Animatable {
      * @param topLeft     the top left
      * @param bottomRight the bottom right
      */
-    public Game(Point topLeft, Point bottomRight) {
+    public GameLevel(Point topLeft, Point bottomRight) {
         this.topLeft = topLeft;
         this.bottomRight = bottomRight;
         this.sprites = new SpriteCollection();
@@ -627,7 +627,7 @@ public class Game implements Animatable {
      */
     public static void main(String[] args) {
         //todo: add args parser
-        Game game = new Game();
-        game.run();
+        GameLevel gameLevel = new GameLevel();
+        gameLevel.run();
     }
 }

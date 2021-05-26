@@ -1,7 +1,7 @@
 package game.objects;
 
 import game.objects.sprites.Sprite;
-import game.runners.Game;
+import game.runners.GameLevel;
 
 /**
  * The interface Game object.
@@ -11,14 +11,14 @@ public interface GameObject extends Sprite {
     /**
      * Remove from game.
      *
-     * @param game the game
+     * @param gameLevel the game
      */
-    void removeFromGame(Game game);
+    void removeFromGame(GameLevel gameLevel);
 
     /**
      * Add to game.
      *
-     * @param game the game
+     * @param gameLevel the game
      */
-    void addToGame(Game game);
+    void addToGame(GameLevel gameLevel);
 }

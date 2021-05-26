@@ -1,7 +1,7 @@
 package game.objects.blocks;
 
 import biuoop.DrawSurface;
-import game.runners.Game;
+import game.runners.GameLevel;
 import geometry.Point;
 import geometry.Rectangle;
 
@@ -79,7 +79,7 @@ public class BorderBlock extends Block {
      * BorderBlock can't be removed from game.
      */
     @Override
-    public void removeFromGame(Game game) {
+    public void removeFromGame(GameLevel gameLevel) {
         //do nothing
     }
 }

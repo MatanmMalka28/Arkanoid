@@ -7,8 +7,8 @@ import geometry.Point;
 import java.awt.Color;
 
 public class GameCircle implements Sprite {
-    private Circle circle;
-    private Color color;
+    private final Circle circle;
+    private final Color color;
 
     public GameCircle(Circle circle, Color color) {
         this.circle = circle;

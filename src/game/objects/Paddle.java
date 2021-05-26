@@ -8,7 +8,7 @@ import game.objects.attributes.Velocity;
 import game.objects.blocks.PaddleBlock;
 import game.objects.collections.GameEnvironment;
 import game.objects.dataStructers.CollisionInfo;
-import game.runners.Game;
+import game.runners.GameLevel;
 import geometry.Line;
 import geometry.Point;
 import geometry.Rectangle;
@@ -256,13 +256,13 @@ public class Paddle implements GameObject, Collidable, MovementNotifier {
     }
 
     @Override
-    public void removeFromGame(Game game) {
-        game.removeCollidable(this);
-        game.removeSprite(this);
+    public void removeFromGame(GameLevel gameLevel) {
+        gameLevel.removeCollidable(this);
+        gameLevel.removeSprite(this);
     }
 
     // Add this paddle to the game.
-    public void addToGame(Game g) {
+    public void addToGame(GameLevel g) {
         g.addSprite(this);
         g.addCollidable(this);
         this.environment = g.getEnvironment();

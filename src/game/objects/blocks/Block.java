@@ -8,7 +8,7 @@ import game.objects.Collidable;
 import game.objects.GameObject;
 import game.objects.attributes.Velocity;
 import game.objects.dataStructers.CollisionInfo;
-import game.runners.Game;
+import game.runners.GameLevel;
 import geometry.Line;
 import geometry.Point;
 import geometry.Rectangle;
@@ -377,15 +377,15 @@ public class Block implements Collidable, HitNotifier, GameObject {
         return v;
     }
 
-    public void removeFromGame(Game game) {
-        game.removeCollidable(this);
-        game.removeSprite(this);
+    public void removeFromGame(GameLevel gameLevel) {
+        gameLevel.removeCollidable(this);
+        gameLevel.removeSprite(this);
     }
 
     @Override
-    public void addToGame(Game game) {
-        game.addCollidable(this);
-        game.addSprite(this);
+    public void addToGame(GameLevel gameLevel) {
+        gameLevel.addCollidable(this);
+        gameLevel.addSprite(this);
     }
 
     @Override

@@ -4,7 +4,7 @@ import biuoop.DrawSurface;
 import game.managers.Counter;
 import game.objects.GameObject;
 import game.objects.sprites.Background;
-import game.runners.Game;
+import game.runners.GameLevel;
 import geometry.Point;
 
 import java.awt.Color;
@@ -111,13 +111,13 @@ public abstract class AbstractIndicator implements GameObject {
     }
 
     @Override
-    public void removeFromGame(Game game) {
-        game.removeSprite(this);
+    public void removeFromGame(GameLevel gameLevel) {
+        gameLevel.removeSprite(this);
     }
 
     @Override
-    public void addToGame(Game game) {
-        game.addSprite(this);
+    public void addToGame(GameLevel gameLevel) {
+        gameLevel.addSprite(this);
     }
 
     @Override
